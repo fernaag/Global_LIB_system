@@ -1,4 +1,4 @@
-# Norwegian model
+# Global LIB model
 
 This repo contains a dynamic stock driven model of the Norwegian vehicle fleet in several layers. The resources are organised as follows: 
 
