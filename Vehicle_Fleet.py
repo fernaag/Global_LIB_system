@@ -1415,7 +1415,7 @@ def strategies_comparative():
     r=5
     custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Coding/Global_model/results/arrays/E01_case6.npy')
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     ax[0,0].set_prop_cycle(custom_cycler)
     e = 7 # Ni
@@ -1502,7 +1502,7 @@ def strategies_comparative():
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
     h = 1 # Hydro
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-            np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000)
+            np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000)
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
@@ -1799,6 +1799,1293 @@ def strategies_comparative():
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     fig.savefig(os.getcwd() + '/results/overview/resource_strategies', dpi=300)
 
+def sensitivity_analysis():
+    from cycler import cycler
+    import seaborn as sns
+    from matplotlib.lines import Line2D
+    r=5
+    custom_cycler = cycler(color=sns.color_palette('magma', 4)) #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # Define storylines
+    sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
+    resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
+    slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,r,:,:,1,:].sum(axis=0)
+    fig, ax = plt.subplots(4,2,figsize=(20,28))
+    # Define sensitivity analysis for Ni
+    e = 7 # Ni
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[0,0].set_prop_cycle(custom_cycler)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
+    right_side = ax[0,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[0,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,0].set_title('a) Nickel', fontsize=20)
+    ax[0,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,0].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Li
+    ax[0,1].set_prop_cycle(custom_cycler)
+    e = 0 # Li
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[0,1].set_prop_cycle(custom_cycler)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
+    right_side = ax[0,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[0,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,1].set_title('b) Lithium', fontsize=20)
+    ax[0,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Co
+    ax[1,0].set_prop_cycle(custom_cycler)
+    e = 6 # Co
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[1,0].set_prop_cycle(custom_cycler)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
+    right_side = ax[1,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[1,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,0].set_title('c) Cobalt', fontsize=20)
+    ax[1,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot P
+    ax[1,1].set_prop_cycle(custom_cycler)
+    e = 4 # P
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[1,1].set_prop_cycle(custom_cycler)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
+    right_side = ax[1,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[1,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,1].set_title('d) Phosphorous', fontsize=20)
+    ax[1,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,1].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Al
+    ax[2,0].set_prop_cycle(custom_cycler)
+    e = 2 # Al
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[2,0].set_prop_cycle(custom_cycler)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
+    right_side = ax[2,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[2,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,0].set_title('e) Aluminium', fontsize=20)
+    ax[2,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Graphite
+    ax[2,1].set_prop_cycle(custom_cycler)
+    e = 1 # Graphite
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[2,1].set_prop_cycle(custom_cycler)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
+    right_side = ax[2,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[2,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,1].set_title('f) Graphite', fontsize=20)
+    ax[2,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Mn
+    ax[3,0].set_prop_cycle(custom_cycler)
+    e = 5 # Mn
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[3,0].set_prop_cycle(custom_cycler)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
+    right_side = ax[3,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[3,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,0].set_title('g) Manganese', fontsize=20)
+    ax[3,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Si
+    ax[3,1].set_prop_cycle(custom_cycler)
+    e = 3 # Si
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'cornflowerblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'salmon', alpha=0.05)
+    
+    ax[3,1].set_prop_cycle(custom_cycler)
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
+    right_side = ax[3,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=1),
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color='salmon', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[3,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,1].set_title('h) Silicon', fontsize=20)
+    ax[3,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis', dpi=300)
+
+def sensitivity_analysis_newcolor():
+    from cycler import cycler
+    import seaborn as sns
+    from matplotlib.lines import Line2D
+    r=5
+    custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # Define storylines
+    sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
+    resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
+    slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,r,:,:,1,:].sum(axis=0)
+    fig, ax = plt.subplots(4,2,figsize=(20,28))
+    # Define sensitivity analysis for Ni
+    e = 7 # Ni
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[0,0].set_prop_cycle(custom_cycler)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
+    right_side = ax[0,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[0,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,0].set_title('a) Nickel', fontsize=20)
+    ax[0,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,0].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Li
+    ax[0,1].set_prop_cycle(custom_cycler)
+    e = 0 # Li
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[0,1].set_prop_cycle(custom_cycler)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
+    right_side = ax[0,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[0,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,1].set_title('b) Lithium', fontsize=20)
+    ax[0,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Co
+    ax[1,0].set_prop_cycle(custom_cycler)
+    e = 6 # Co
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[1,0].set_prop_cycle(custom_cycler)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
+    right_side = ax[1,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[1,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,0].set_title('c) Cobalt', fontsize=20)
+    ax[1,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot P
+    ax[1,1].set_prop_cycle(custom_cycler)
+    e = 4 # P
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[1,1].set_prop_cycle(custom_cycler)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
+    right_side = ax[1,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[1,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,1].set_title('d) Phosphorous', fontsize=20)
+    ax[1,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,1].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Al
+    ax[2,0].set_prop_cycle(custom_cycler)
+    e = 2 # Al
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[2,0].set_prop_cycle(custom_cycler)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
+    right_side = ax[2,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[2,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,0].set_title('e) Aluminium', fontsize=20)
+    ax[2,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Graphite
+    ax[2,1].set_prop_cycle(custom_cycler)
+    e = 1 # Graphite
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[2,1].set_prop_cycle(custom_cycler)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
+    right_side = ax[2,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[2,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,1].set_title('f) Graphite', fontsize=20)
+    ax[2,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Mn
+    ax[3,0].set_prop_cycle(custom_cycler)
+    e = 5 # Mn
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[3,0].set_prop_cycle(custom_cycler)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
+    right_side = ax[3,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[3,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,0].set_title('g) Manganese', fontsize=20)
+    ax[3,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Si
+    ax[3,1].set_prop_cycle(custom_cycler)
+    e = 3 # Si
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if S==0:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                        if S==1:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                        if S==2:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+    
+    ax[3,1].set_prop_cycle(custom_cycler)
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
+    right_side = ax[3,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+    ax[3,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,1].set_title('h) Silicon', fontsize=20)
+    ax[3,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_cool', dpi=300)
+
+def sensitivity_analysis_grey():
+    from cycler import cycler
+    import seaborn as sns
+    from matplotlib.lines import Line2D
+    r=5
+    custom_cycler = cycler(color=sns.color_palette('magma', 4)) #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # Define storylines
+    sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
+    resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
+    slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,r,:,:,1,:].sum(axis=0)
+    fig, ax = plt.subplots(4,2,figsize=(20,28))
+    # Define sensitivity analysis for Ni
+    e = 7 # Ni
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[0,0].set_prop_cycle(custom_cycler)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
+    right_side = ax[0,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[0,0].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,0].set_title('a) Nickel', fontsize=20)
+    ax[0,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,0].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Li
+    ax[0,1].set_prop_cycle(custom_cycler)
+    e = 0 # Li
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[0,1].set_prop_cycle(custom_cycler)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
+    right_side = ax[0,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[0,1].legend(custom_lines, ['Scenario Range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[0,1].set_title('b) Lithium', fontsize=20)
+    ax[0,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Co
+    ax[1,0].set_prop_cycle(custom_cycler)
+    e = 6 # Co
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[1,0].set_prop_cycle(custom_cycler)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
+    right_side = ax[1,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[1,0].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,0].set_title('c) Cobalt', fontsize=20)
+    ax[1,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot P
+    ax[1,1].set_prop_cycle(custom_cycler)
+    e = 4 # P
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[1,1].set_prop_cycle(custom_cycler)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
+    right_side = ax[1,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[1,1].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[1,1].set_title('d) Phosphorous', fontsize=20)
+    ax[1,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,1].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Al
+    ax[2,0].set_prop_cycle(custom_cycler)
+    e = 2 # Al
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[2,0].set_prop_cycle(custom_cycler)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
+    right_side = ax[2,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[2,0].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,0].set_title('e) Aluminium', fontsize=20)
+    ax[2,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Graphite
+    ax[2,1].set_prop_cycle(custom_cycler)
+    e = 1 # Graphite
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    ax[2,1].set_prop_cycle(custom_cycler)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
+    right_side = ax[2,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[2,1].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[2,1].set_title('f) Graphite', fontsize=20)
+    ax[2,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Mn
+    ax[3,0].set_prop_cycle(custom_cycler)
+    e = 5 # Mn
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[3,0].set_prop_cycle(custom_cycler)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
+    right_side = ax[3,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,0].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[3,0].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,0].set_title('g) Manganese', fontsize=20)
+    ax[3,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Si
+    ax[3,1].set_prop_cycle(custom_cycler)
+    e = 3 # Si
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        # Values from case 3
+                        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+                        # Values from case 6
+                        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'silver', alpha=0.05)
+    
+    ax[3,1].set_prop_cycle(custom_cycler)
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
+    right_side = ax[3,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [
+                Line2D([0], [0], color='silver', lw=1),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('magma', 4)[3], lw=3)]
+    ax[3,1].legend(custom_lines, ['Scenario range', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+    ax[3,1].set_title('h) Silicon', fontsize=20)
+    ax[3,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_grey', dpi=300)
+
 def Ni_strategies_combined():
     from cycler import cycler
     import seaborn as sns
@@ -1883,11 +3170,11 @@ def Ni_strategies_combined_wedge():
 
 def export_P():
     results = os.path.join(os.getcwd(), 'results')
-    np.save(results+'/arrays/P_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,4,:,:])/1000)
+    #np.save(results+'/arrays/P_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,4,:,:])/1000)
     
 def export_Li():
     results = os.path.join(os.getcwd(), 'results')
-    np.save(results+'/arrays/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
+    #np.save(results+'/arrays/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
 
 # %%
 def model_case_6():
@@ -2046,10 +3333,10 @@ def model_case_6():
         for h in range(Nh):
             MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,R,r,:,:,h,:] = np.einsum('zSabpet->zSapet', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,r,:,:,:,:]) - MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,R,r,:,:,h,:]# Solving recycling loop 
         ### Exporting these results for latter plotting
-        np.save(os.getcwd()+'/results/arrays/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
-        np.save(os.getcwd()+'/results/arrays/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
-        np.save(os.getcwd()+'/results/arrays/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-        np.save(os.getcwd()+'/results/arrays/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+        #np.save(os.getcwd()+'/results/arrays/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
+        #np.save(os.getcwd()+'/results/arrays/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
+        #np.save(os.getcwd()+'/results/arrays/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+        #np.save(os.getcwd()+'/results/arrays/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 # %%
 
