@@ -1416,43 +1416,33 @@ def strategies_comparative():
     custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
     e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+        # Define storylines
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     ax[0,0].set_prop_cycle(custom_cycler)
     e = 7 # Ni
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Pyrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Pyrometallurgy
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Pyrometallurgy
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
     z = 1 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
     h = 0 # Direct
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
     h = 1 # Hydrometallurgy
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1461,8 +1451,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[0,0].spines["top"]
     top.set_visible(False)
-    ax[0,0].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[0,0].set_title('a) Strategies for Ni use management', fontsize=20)
+    ax[0,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
@@ -1472,31 +1462,24 @@ def strategies_comparative():
     e = 0 # Li
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
+
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
     z = 1 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
     h = 0 # Direct
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1508,8 +1491,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[0,1].spines["top"]
     top.set_visible(False)
-    ax[0,1].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[0,1].set_title('b) Strategies for Li use management', fontsize=20)
+    ax[0,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
@@ -1519,31 +1502,23 @@ def strategies_comparative():
     e = 6 # Co
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
     z = 1 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
     h = 0 # Direct
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1555,8 +1530,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
     top.set_visible(False)
-    ax[1,0].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[1,0].set_title('c) Strategies for Co use management', fontsize=20)
+    ax[1,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
@@ -1566,31 +1541,23 @@ def strategies_comparative():
     e = 4 # P
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Baseline
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
+    z = 1 # Low
     h = 0 # Direct
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1602,8 +1569,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
-    ax[1,1].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[1,1].set_title('d) Strategies for P use management', fontsize=20)
+    ax[1,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[1,1].set_title('d) Phosphorous', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
@@ -1613,31 +1580,23 @@ def strategies_comparative():
     e = 2 # Al
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Baseline
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
+    z = 1 # Low
     h = 0 # Direct
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1649,8 +1608,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[2,0].spines["top"]
     top.set_visible(False)
-    ax[2,0].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[2,0].set_title('e) Strategies for Al use management', fontsize=20)
+    ax[2,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
@@ -1660,31 +1619,23 @@ def strategies_comparative():
     e = 1 # Graphite
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Baseline
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
+    z = 1 # Low
     h = 0 # Direct
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1696,8 +1647,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
     top.set_visible(False)
-    ax[2,1].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[2,1].set_title('f) Strategies for Graphite use management', fontsize=20)
+    ax[2,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
@@ -1708,31 +1659,23 @@ def strategies_comparative():
     e = 5 # Mn
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Baseline
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
+    z = 1 # Low
     h = 0 # Direct
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1744,8 +1687,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
     top.set_visible(False)
-    ax[3,0].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[3,0].set_title('g) Strategies for Mn use management', fontsize=20)
+    ax[3,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[3,0].set_title('g) Manganese', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
@@ -1756,31 +1699,23 @@ def strategies_comparative():
     e = 3 # Si
     z = 1 # Baseline
     S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
+    a = 6 # BNEF
+    R = 0 # LFP reuse
+    h = 1 # Hydrometallurgical
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
     a = 1 # High LFP
-    R = 1 # All reuse
-    h = 1 # Hydrometallurgy
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    a = 0 # High Ni
+    a = 6 # BNEF
     R = 2 # All reuse
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                 np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+    R = 0 # LFP reused
     z = 0 # Low
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
-    h = 1 # Hydrometallurgy
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
-    z = 1 # Baseline
-    S = 1 # Baseline
-    a = 0 # High Ni
-    R = 1 # No reuse
+    z = 1 # Low
     h = 0 # Direct
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
             np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
@@ -1792,8 +1727,8 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[3,1].spines["top"]
     top.set_visible(False)
-    ax[3,1].legend(['Baseline', 'Shift to LFP', 'Stationary reuse', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
-    ax[3,1].set_title('h) Strategies for Si use management', fontsize=20)
+    ax[3,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
+    ax[3,1].set_title('h) Silicon', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2295,24 +2230,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[0,0].set_prop_cycle(custom_cycler)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2352,24 +2287,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[0,1].set_prop_cycle(custom_cycler)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2409,24 +2344,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[1,0].set_prop_cycle(custom_cycler)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2466,24 +2401,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[1,1].set_prop_cycle(custom_cycler)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2523,24 +2458,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[2,0].set_prop_cycle(custom_cycler)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2580,24 +2515,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[2,1].set_prop_cycle(custom_cycler)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2638,24 +2573,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[3,0].set_prop_cycle(custom_cycler)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2696,24 +2631,24 @@ def sensitivity_analysis_newcolor():
                         if S==0:
                             # Values from case 3
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                             # Values from case 6
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'powderblue', alpha=0.02)
                         if S==1:
                             # Values from case 3
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                             # Values from case 6
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'dodgerblue', alpha=0.02)
                         if S==2:
                             # Values from case 3
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                        np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
                             # Values from case 6
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.05)
+                                    np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[3,1].set_prop_cycle(custom_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3174,7 +3109,7 @@ def export_P():
     
 def export_Li():
     results = os.path.join(os.getcwd(), 'results')
-    #np.save(results+'/arrays/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
 
 # %%
 def model_case_6():
@@ -3332,11 +3267,11 @@ def model_case_6():
     for R in range(NR):
         for h in range(Nh):
             MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,R,r,:,:,h,:] = np.einsum('zSabpet->zSapet', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,r,:,:,:,:]) - MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,R,r,:,:,h,:]# Solving recycling loop 
-        ### Exporting these results for latter plotting
-        #np.save(os.getcwd()+'/results/arrays/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
-        #np.save(os.getcwd()+'/results/arrays/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
-        #np.save(os.getcwd()+'/results/arrays/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-        #np.save(os.getcwd()+'/results/arrays/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+        ## Exporting these results for latter plotting
+        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
+        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
+        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 # %%
 
