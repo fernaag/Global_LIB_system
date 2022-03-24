@@ -1000,15 +1000,17 @@ def rec_content_lifetime():
 def rec_content_strategies():
     from cycler import cycler
     import seaborn as sns
-    e13_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Coding/Global_model/results/arrays/E13_case6.npy')
-    e23_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Coding/Global_model/results/arrays/E23_case6.npy')
-    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Coding/Global_model/results/arrays/E81_case6.npy')
+    e13_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy')
+    e23_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy')
+    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
+
     z = 1 
     S = 1
     h = 1
-    a = 0
+    a = 6
     e = 7 # Ni
-    R = 1
+    R = 0
     rec_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
     alt_cycler = (cycler(color=['maroon','brown', 'red', 'coral', 'midnightblue', 'navy','blue', 'cornflowerblue', 'darkgreen', 'green', 'yellowgreen', 'lawngreen']) *
           cycler(linestyle=['-']))
@@ -1031,7 +1033,7 @@ def rec_content_strategies():
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, linewidth=2)
     
-    a = 0
+    a = 6
     R = 2 # All reuse
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, linewidth=2)
@@ -1053,7 +1055,7 @@ def rec_content_strategies():
     
     ax[0].plot([2030, 2035], [4, 12], 'r*', markersize=8)
     
-    ax[0].legend(['Baseline', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling', 'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
+    ax[0].legend(['Business as usual', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling', 'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
     ax[0].set_ylim([0,100])
     ax[0].set_xlim([2020,2040])
     ax[0].xaxis.set_ticks(np.arange(2020, 2041, 5))
@@ -1062,9 +1064,9 @@ def rec_content_strategies():
     z = 1 
     S = 1
     h = 1
-    a = 0
+    a = 6
     e = 6 # Co
-    R = 1
+    R = 0
     ax[1].set_prop_cycle(rec_cycler)
     right_side = ax[1].spines["right"]
     right_side.set_visible(False)
@@ -1082,7 +1084,7 @@ def rec_content_strategies():
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, linewidth=2)
     
-    a = 0
+    a = 6
     R = 2 # All reuse
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, linewidth=2)
@@ -1103,7 +1105,7 @@ def rec_content_strategies():
     
     ax[1].plot([2030, 2035], [12, 20], 'r*', markersize=8)
     
-    ax[1].legend(['Baseline', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling', 'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
+    ax[1].legend(['Business as usual', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling', 'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
     ax[1].set_ylim([0,100])
     ax[1].set_xlim([2020,2040])
     ax[1].xaxis.set_ticks(np.arange(2020, 2041, 5))
@@ -1112,9 +1114,9 @@ def rec_content_strategies():
     z = 1 
     S = 1
     h = 1
-    a = 0
+    a = 6
     e = 0 # Co
-    R = 1
+    R = 0
     ax[2].set_prop_cycle(rec_cycler)
     right_side = ax[2].spines["right"]
     right_side.set_visible(False)
@@ -1132,7 +1134,7 @@ def rec_content_strategies():
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100,':', linewidth=2)
     
-    a = 0
+    a = 6
     R = 2 # All reuse
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, linewidth=2)
@@ -1153,7 +1155,7 @@ def rec_content_strategies():
     
     ax[2].plot([2030, 2035], [4, 10], 'r*', markersize=8)
     
-    ax[2].legend(['Baseline', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling',  'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
+    ax[2].legend(['Business as usual', 'Shift to LFP', 'Reuse', 'Fleet reduction', 'Direct recycling',  'Replacements and reuse', 'EU targets'], loc='upper left',prop={'size':13})
     ax[2].set_ylim([0,100])
     ax[2].set_xlim([2020,2040])
     ax[2].xaxis.set_ticks(np.arange(2020, 2041, 5))
@@ -1192,6 +1194,7 @@ def flows():
     ax[0].tick_params(axis='both', which='major', labelsize=16)
     ax[0].set_ylim([0,700])
     ax[0].set_xlim([2015,2050])
+    ax[0].grid()
     
     ax[1].set_prop_cycle(custom_cycler)
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
@@ -1223,7 +1226,8 @@ def flows():
     ax[1].tick_params(axis='both', which='major', labelsize=16)
     ax[1].set_ylim([0,700])
     ax[1].set_xlim([2015,2050])
-    fig.savefig(os.getcwd() + '/results/overview/system_flows')
+    ax[1].grid()
+    fig.savefig(os.getcwd() + '/results/overview/system_flows', dpi=300)
 
 def slb_stock():
     ### SLB stock
@@ -1289,7 +1293,8 @@ def slb_stock():
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
                     last, color = 'r', alpha = 0.9, label='High Net Zero')
     
-    ax.set_ylabel('Modules [kt]',fontsize =18) # TODO: Translate also to capacity in secondary y-axis
+    ax.set_ylabel('Modules [kt]',fontsize =18) 
+    
     # Adding capacity
     ax2 = ax.twinx()
     ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
@@ -1373,8 +1378,7 @@ def slb_capacity():
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['C_6'].Values[z,S,a,R,r,:,55::].sum(axis=0)/1000000 ,\
                     last, color = 'r', alpha = 0.9)
-    ax.set_ylabel('Modules [kt]',fontsize =18) # TODO: Translate also to capacity in secondary y-axis
-    
+    ax.set_ylabel('Modules [TWh]',fontsize =18)
     right_side = ax.spines["right"]
     right_side.set_visible(False)
     top = ax.spines["top"]
@@ -1385,7 +1389,7 @@ def slb_capacity():
     #ax.set_ylim([0,5])
     ax.tick_params(axis='both', which='major', labelsize=18)
     ax.set_xlim([2015, 2050])
-    fig.savefig(os.getcwd() + '/results/overview/slb_stock')
+    fig.savefig(os.getcwd() + '/results/overview/slb_stock', dpi=300)
 
 def chemistry_scenarios():
     
@@ -2452,7 +2456,7 @@ def sensitivity_analysis_newcolor():
     e = 2 # Al
     for z in range(Nz):
         for S in range(NS):
-            for a in range(Na):
+            for a in [0,1,2,4,5,6]:
                 for R in range(NR):
                     for h in range(Nh):
                         if S==0:
@@ -3108,7 +3112,6 @@ def export_P():
     #np.save(results+'/arrays/P_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,4,:,:])/1000)
     
 def export_Li():
-    results = os.path.join(os.getcwd(), 'results')
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
 
 # %%
