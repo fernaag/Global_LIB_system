@@ -22,6 +22,9 @@ import matplotlib
 import product_component_model as pcm
 mpl_logger = log.getLogger("matplotlib")
 mpl_logger.setLevel(log.WARNING)
+xlrd.xlsx.Element_has_iter = True
+
+
 # For Ipython Notebook only
 ### Preamble
 
@@ -2223,6 +2226,8 @@ def sensitivity_analysis_newcolor():
     resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
     bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
     slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,r,:,:,1,:].sum(axis=0)
+    scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,r,:,:,2,:].sum(axis=0)
+
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     # Define sensitivity analysis for Ni
     e = 7 # Ni
@@ -2252,8 +2257,8 @@ def sensitivity_analysis_newcolor():
                             # Values from case 6
                             ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
-    
-    ax[0,0].set_prop_cycle(custom_cycler)
+    scen_cycler = cycler(color=sns.color_palette('cool', 5))
+    ax[0,0].set_prop_cycle(scen_cycler)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2262,6 +2267,8 @@ def sensitivity_analysis_newcolor():
                                         resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
@@ -2270,10 +2277,11 @@ def sensitivity_analysis_newcolor():
     custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
                 Line2D([0], [0], color='dodgerblue', lw=1),
                 Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[3], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3)]
     ax[0,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
@@ -2311,6 +2319,8 @@ def sensitivity_analysis_newcolor():
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[0,1].set_prop_cycle(custom_cycler)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2369,6 +2379,8 @@ def sensitivity_analysis_newcolor():
     
     ax[1,0].set_prop_cycle(custom_cycler)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
@@ -2425,6 +2437,8 @@ def sensitivity_analysis_newcolor():
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[1,1].set_prop_cycle(custom_cycler)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2483,6 +2497,8 @@ def sensitivity_analysis_newcolor():
     
     ax[2,0].set_prop_cycle(custom_cycler)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
@@ -2539,6 +2555,8 @@ def sensitivity_analysis_newcolor():
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[2,1].set_prop_cycle(custom_cycler)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2598,6 +2616,8 @@ def sensitivity_analysis_newcolor():
     
     ax[3,0].set_prop_cycle(custom_cycler)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
@@ -2655,6 +2675,8 @@ def sensitivity_analysis_newcolor():
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
     ax[3,1].set_prop_cycle(custom_cycler)
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transition')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3107,6 +3129,122 @@ def Ni_strategies_combined_wedge():
     #ax.set_ylim([0,5])
     ax.tick_params(axis='both', which='major', labelsize=18)
 
+def sensitivity_table():
+    z, S, a, R, e, h = pd.core.reshape.util.cartesian_product(
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Chemistry_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Element")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items
+    ]
+    )
+    
+    primary_materials = pd.DataFrame(
+        dict(Stock_Scenarios=z, EV_Scenario=S, Chemistry_Scenario=a, Reuse_Scenario=R, Element=e, Recycling_Process=h)
+    )
+    r=5
+    ### Adding data to the dataframes
+    materials = np.einsum('zSaRpeht->zSaReh', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,:,:,:])
+    baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,1,r,:,:,1,:])
+    # Calculate relative difference to baseline
+    sensitivity = np.zeros((Nz, NS, Na, NR, Ne, Nh))    
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for e in range(Ne):
+                        for h in range(Nh):
+                            sensitivity[z,S,a,R,e,h] = (materials[z,S,a,R,e,h]-baseline[e])/baseline[e]
+    # Add values to table
+    for z, stock in enumerate(
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items
+    ):
+        for S, ev in enumerate(
+            IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items
+        ):
+            for a, chem in enumerate(
+                IndexTable.Classification[IndexTable.index.get_loc("Chemistry_Scenarios")].Items
+            ):
+                for R, reuse in enumerate(
+                    IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items
+                ):
+                    for e, mat in enumerate(
+                    IndexTable.Classification[IndexTable.index.get_loc("Element")].Items
+                ):
+                        for h, rec in enumerate(
+                    IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items
+                ):
+                            primary_materials.loc[
+                                (primary_materials.Stock_Scenarios == stock)
+                                & (primary_materials.EV_Scenario == ev)
+                                & (primary_materials.Chemistry_Scenario == chem)
+                                & (primary_materials.Reuse_Scenario == reuse)
+                                & (primary_materials.Element == mat)
+                                & (primary_materials.Recycling_Process == rec),
+                                "value",
+                            ] = sensitivity[z, S, a, R, e, h]
+    shift_to_lfp = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+                                & (primary_materials.EV_Scenario == 'SD')
+                                & (primary_materials.Chemistry_Scenario == 'LFP')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+    shift_to_lfp.reset_index(inplace=True, drop=True)
+    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
+    shift_to_lfp = shift_to_lfp.style.background_gradient(cmap=cm)
+    
+    all_reused = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+                                & (primary_materials.EV_Scenario == 'SD')
+                                & (primary_materials.Chemistry_Scenario == 'BNEF')
+                                & (primary_materials.Reuse_Scenario == 'All reused')
+                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+    all_reused.reset_index(inplace=True, drop=True)
+    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
+    all_reused = all_reused.style.background_gradient(cmap=cm)
+    
+    fleet_reduction = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Low')
+                                & (primary_materials.EV_Scenario == 'SD')
+                                & (primary_materials.Chemistry_Scenario == 'BNEF')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+    fleet_reduction.reset_index(inplace=True, drop=True)
+    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
+    fleet_reduction = fleet_reduction.style.background_gradient(cmap=cm)
+    
+    eff_recycling = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+                                & (primary_materials.EV_Scenario == 'SD')
+                                & (primary_materials.Chemistry_Scenario == 'BNEF')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Recycling_Process == 'Direct')]
+    eff_recycling.reset_index(inplace=True, drop=True)
+    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
+    eff_recycling = eff_recycling.style.background_gradient(cmap=cm)
+    
+    faster_ev = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+                                & (primary_materials.EV_Scenario == 'Net Zero')
+                                & (primary_materials.Chemistry_Scenario == 'BNEF')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+    faster_ev.reset_index(inplace=True, drop=True)
+    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
+    faster_ev = faster_ev.style.background_gradient(cmap=cm)
+                        
+                        
+    # Create a Pandas Excel writer using XlsxWriter as the engine.
+    writer = pd.ExcelWriter(os.path.join(os.getcwd(), 'results/sensitivity_table.xlsx'), engine='xlsxwriter')
+
+    # Write each dataframe to a different worksheet.
+    shift_to_lfp.to_excel(writer, sheet_name='shift_to_lfp')
+    all_reused.to_excel(writer, sheet_name='all_reused')
+    fleet_reduction.to_excel(writer, sheet_name='fleet_reduction')
+    eff_recycling.to_excel(writer, sheet_name='eff_recycling')
+    faster_ev.to_excel(writer, sheet_name='faster_ev')
+
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+    
+
 def export_P():
     results = os.path.join(os.getcwd(), 'results')
     #np.save(results+'/arrays/P_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,4,:,:])/1000)
@@ -3275,6 +3413,8 @@ def model_case_6():
         np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
         np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
         np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+
+# %%
 
 # %%
 
