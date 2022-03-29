@@ -2260,29 +2260,20 @@ def sensitivity_analysis_newcolor():
     scen_cycler = cycler(color=sns.color_palette('cool', 5))
     ax[0,0].set_prop_cycle(scen_cycler)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
     top = ax[0,0].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[3], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3)]
-    ax[0,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2317,31 +2308,22 @@ def sensitivity_analysis_newcolor():
                             # Values from case 6
                             ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
-    
-    ax[0,1].set_prop_cycle(custom_cycler)
+    ax[0,1].set_prop_cycle(scen_cycler)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                    scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
     top = ax[0,1].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[0,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2377,30 +2359,22 @@ def sensitivity_analysis_newcolor():
                             ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[1,0].set_prop_cycle(custom_cycler)
+    ax[1,0].set_prop_cycle(scen_cycler)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[1,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2436,30 +2410,22 @@ def sensitivity_analysis_newcolor():
                             ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[1,1].set_prop_cycle(custom_cycler)
+    ax[1,1].set_prop_cycle(scen_cycler)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side = ax[1,1].spines["right"]
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[1,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[1,1].set_title('d) Phosphorous', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2495,30 +2461,22 @@ def sensitivity_analysis_newcolor():
                             ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[2,0].set_prop_cycle(custom_cycler)
+    ax[2,0].set_prop_cycle(scen_cycler)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
     top = ax[2,0].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[2,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2554,30 +2512,22 @@ def sensitivity_analysis_newcolor():
                             ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[2,1].set_prop_cycle(custom_cycler)
+    ax[2,1].set_prop_cycle(scen_cycler)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[2,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2614,30 +2564,22 @@ def sensitivity_analysis_newcolor():
                             ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[3,0].set_prop_cycle(custom_cycler)
+    ax[3,0].set_prop_cycle(scen_cycler)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
     right_side = ax[3,0].spines["right"]
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
     top.set_visible(False)
-    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
-                Line2D([0], [0], color='dodgerblue', lw=1),
-                Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[3,0].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
     ax[3,0].set_title('g) Manganese', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
@@ -2674,17 +2616,17 @@ def sensitivity_analysis_newcolor():
                             ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, 'blueviolet', alpha=0.02)
     
-    ax[3,1].set_prop_cycle(custom_cycler)
+    ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 5')
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Resource efficient')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition')
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transitoin')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Business as usual')
+                                        bau[e,65::]/1000000,  linewidth=3, label='Baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Resource oriented')
+                                        resource[e,65::]/1000000,  linewidth=3, label='Efficient recycling ')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Sustainable future')
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Resource intensive')
     ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
@@ -2693,15 +2635,26 @@ def sensitivity_analysis_newcolor():
     custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
                 Line2D([0], [0], color='dodgerblue', lw=1),
                 Line2D([0], [0], color='blueviolet', lw=1),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[2], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 4)[3], lw=3)]
-    ax[3,1].legend(custom_lines, ['STEP', 'SD', 'Net Zero', 'Slow transition', 'Business as usual', 'Resource oriented', 'Sustainable future'], loc='upper left',prop={'size':15})
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[3], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3)
+                ]
+    scen_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1)]
     ax[3,1].set_title('h) Silicon', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
+    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, 0), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
+    #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
+    # Add title
+    fig.suptitle('Resource use per technology used to meet storage demand', fontsize=25)
+    fig.subplots_adjust(top=0.92, bottom=0.08)
     fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_cool', dpi=300)
 
 def sensitivity_analysis_grey():
