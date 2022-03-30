@@ -619,6 +619,14 @@ import seaborn as sns
 r=5
 custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
 #%%
+# Storylines
+e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
+resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
+bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
+slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,r,:,:,1,:].sum(axis=0)
+scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,r,:,:,2,:].sum(axis=0)
+#%% 
 def results_Sofia():
     # Exporting results for Sofia
     # Baseline values for the stock
@@ -1164,6 +1172,434 @@ def rec_content_strategies():
     ax[2].xaxis.set_ticks(np.arange(2020, 2041, 5))
     
     fig.savefig(os.getcwd() + '/results/overview/rec_content_strategies', dpi=300)
+
+def rec_content_sensitivity():
+    from cycler import cycler
+    import seaborn as sns
+    from matplotlib.lines import Line2D
+    e13_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy') # zSarbpet
+    e23_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy') # zSarbpet
+    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')# zSaRrpeht
+    
+    fig, ax = plt.subplots(4,2,figsize=(20,28))
+    # Define sensitivity analysis for Ni
+    e = 7 # Ni
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    scen_cycler = cycler(color=sns.color_palette('viridis_r', 5))
+    ax[0,0].set_prop_cycle(scen_cycler)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,0].set_ylabel('Recycled content Ni [%]',fontsize =18)
+    right_side = ax[0,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,0].spines["top"]
+    top.set_visible(False)
+    ax[0,0].set_title('a) Nickel', fontsize=20)
+    ax[0,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,0].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Li
+    ax[0,1].set_prop_cycle(custom_cycler)
+    e = 0 # Li
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[0,1].set_prop_cycle(scen_cycler)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[0,1].set_ylabel('Recycled content Li [%]',fontsize =18)
+    right_side = ax[0,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,1].spines["top"]
+    top.set_visible(False)
+    ax[0,1].set_title('b) Lithium', fontsize=20)
+    ax[0,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Co
+    ax[1,0].set_prop_cycle(custom_cycler)
+    e = 6 # Co
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[1,0].set_prop_cycle(scen_cycler)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,0].set_ylabel('Recycled content Co [%]',fontsize =18)
+    right_side = ax[1,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,0].spines["top"]
+    top.set_visible(False)
+    ax[1,0].set_title('c) Cobalt', fontsize=20)
+    ax[1,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot P
+    ax[1,1].set_prop_cycle(custom_cycler)
+    e = 4 # P
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[1,1].set_prop_cycle(scen_cycler)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[1,1].set_ylabel('Recycled content P [%]',fontsize =18)
+    right_side = ax[1,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,1].spines["top"]
+    top.set_visible(False)
+    ax[1,1].set_title('d) Phosphorous', fontsize=20)
+    ax[1,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[1,1].tick_params(axis='both', which='major', labelsize=18)
+
+    ## Plot Al
+    ax[2,0].set_prop_cycle(custom_cycler)
+    e = 2 # Al
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[2,0].set_prop_cycle(scen_cycler)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,0].set_ylabel('Recycled content Al [%]',fontsize =18)
+    right_side = ax[2,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,0].spines["top"]
+    top.set_visible(False)
+    ax[2,0].set_title('e) Aluminium', fontsize=20)
+    ax[2,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    ## Plot Graphite
+    ax[2,1].set_prop_cycle(custom_cycler)
+    e = 1 # Graphite
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[2,1].set_prop_cycle(scen_cycler)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[2,1].set_ylabel('Recycled content C [%]',fontsize =18)
+    right_side = ax[2,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,1].spines["top"]
+    top.set_visible(False)
+    ax[2,1].set_title('f) Graphite', fontsize=20)
+    ax[2,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[2,1].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Mn
+    ax[3,0].set_prop_cycle(custom_cycler)
+    e = 5 # Mn
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[3,0].set_prop_cycle(scen_cycler)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3)
+    ax[3,0].set_ylabel('Recycled content Mn [%]',fontsize =18)
+    right_side = ax[3,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,0].spines["top"]
+    top.set_visible(False)
+    ax[3,0].set_title('g) Manganese', fontsize=20)
+    ax[3,0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,0].tick_params(axis='both', which='major', labelsize=18)
+    
+    
+    ## Plot Si
+    ax[3,1].set_prop_cycle(custom_cycler)
+    e = 3 # Si
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,2,4,5,6]:
+                for R in range(NR):
+                    for h in range(Nh):
+                        if h==0:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[0], alpha=0.02)
+                        if h==1:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                            # # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[1], alpha=0.02)
+                        if h==2:
+                            # Values from case 3
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[z,S,a,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+                            # Values from case 6
+                            ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[z,S,a,R,:,:,e,h
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[z,S,a,:,:,:,e,70:] + e23_replacements[z,S,a,:,:,:,e,70:])/1000000)*100, color=sns.color_palette('viridis_r', 3)[2], alpha=0.02)
+    ax[3,1].set_prop_cycle(scen_cycler)
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', e81_replacements[0,2,2,2,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (e13_replacements[0,2,2,:,:,:,e,70:] + e23_replacements[0,2,2,:,:,:,e,70:])/1000000)*100, linewidth=3, label='Resource efficient')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,2,0,0,:,:,e,0
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,2,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,2,0,:,:,:,e,70:])/1000000)*100, linewidth=3, label='Slow transition')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,1,6,0,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,1,6,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,1,6,:,:,:,e,70:])/1000000)*100, linewidth=3, label='Baseline')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,:,:,e,1
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[1,0,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[1,0,1,:,:,:,e,70:])/1000000)*100, linewidth=3, label='Efficient recycling')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[2,2,5,2,:,:,e,2
+                                        ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[2,2,5,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[2,2,5,:,:,:,e,70:])/1000000)*100, linewidth=3, label='Resource intensive')
+    ax[3,1].set_ylabel('Recycled content Si [%]',fontsize =18)
+    right_side = ax[3,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,1].spines["top"]
+    top.set_visible(False)
+    custom_lines = [Line2D([0], [0], color=sns.color_palette('viridis_r', 3)[0], lw=1),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 3)[1], lw=1),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 3)[2], lw=1),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 5)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 5)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 5)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 5)[3], lw=3),
+                Line2D([0], [0], color=sns.color_palette('viridis_r', 5)[4], lw=3)
+                ]
+    ax[3,1].set_title('h) Silicon', fontsize=20)
+    ax[3,1].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
+    fig.legend(custom_lines, ['Direct recycling', 'Hydrometallurgical recycling', 'Pyrometallurgical recycling']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, 0), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
+    #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
+    # Add title
+    fig.suptitle('Recycled content by material for all scenarios', fontsize=30)
+    fig.subplots_adjust(top=0.92, bottom=0.08)
+    fig.savefig(os.getcwd() + '/results/overview/rec_content_sensitivity', dpi=300)
 
 def flows():
     fig, ax = plt.subplots(1,2, figsize=(17,8))
