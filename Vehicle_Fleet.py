@@ -1232,6 +1232,124 @@ def flows():
     ax[1].grid()
     fig.savefig(os.getcwd() + '/results/overview/system_flows', dpi=300)
 
+def flows_alt():
+    custom_cycler = cycler(color=sns.color_palette('Paired', 20)) #'Set2', 'Paired', 'YlGnBu'
+    fig, ax = plt.subplots(1,3, figsize=(21,10))
+    ax[0].set_prop_cycle(custom_cycler)
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,r,1,:,55:]/1000))
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,r,1,:,55:,:]/1000))
+    
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,r,1,:,55:]/1000))
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,r,1,:,55:,:]/1000))
+    
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,r,1,:,55:]/1000))
+    ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,r,1,:,55:,:]/1000))
+    
+    fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
+    ax[0].set_prop_cycle(fill_cycler)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,r,1,:,55:,:]/1000), alpha=0.2)
+    
+    ax[0].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
+    right_side = ax[0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0].spines["top"]
+    top.set_visible(False)
+    ax[0].set_title('a) Low stock scenarios', fontsize=20)
+    ax[0].set_xlabel('Year',fontsize =18)
+    ax[0].tick_params(axis='both', which='major', labelsize=16)
+    ax[0].set_ylim([0,700])
+    ax[0].set_xlim([2015,2050])
+    ax[0].grid()
+    
+    custom_cycler = cycler(color=sns.color_palette('Paired', 20)) #'Set2', 'Paired', 'YlGnBu'
+    ax[1].set_prop_cycle(custom_cycler)
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,r,1,:,55:]/1000))
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,r,1,:,55:,:]/1000))
+    
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,r,1,:,55:]/1000))
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,r,1,:,55:,:]/1000))
+    
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,r,1,:,55:]/1000))
+    ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,r,1,:,55:,:]/1000))
+    
+    fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
+    ax[1].set_prop_cycle(fill_cycler)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,r,1,:,55:,:]/1000), alpha=0.2)
+    
+    ax[1].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
+    right_side = ax[1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1].spines["top"]
+    top.set_visible(False)
+    ax[1].set_title('b) Medium stock scenarios', fontsize=20)
+    ax[1].set_xlabel('Year',fontsize =18)
+    ax[1].tick_params(axis='both', which='major', labelsize=16)
+    ax[1].set_ylim([0,700])
+    ax[1].set_xlim([2015,2050])
+    ax[1].grid()
+    
+    custom_cycler = cycler(color=sns.color_palette('Paired', 20)) #'Set2', 'Paired', 'YlGnBu'    ax[2].set_prop_cycle(custom_cycler)
+    ax[2].set_prop_cycle(custom_cycler)
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,r,1,:,55:]/1000), label='STEP inflows')
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,r,1,:,55:,:]/1000), label='STEP outflows')
+    
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,r,1,:,55:]/1000), label='SD inflows')
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,r,1,:,55:,:]/1000), label='SD outflows')
+    
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,r,1,:,55:]/1000), label='Net Zero inflows')
+    ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,r,1,:,55:,:]/1000), label='Net Zero outflows')
+    
+    fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
+    ax[2].set_prop_cycle(fill_cycler)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,r,1,:,55:,:]/1000), label='Resource gap Net Zero', alpha=0.2)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,r,1,:,55:,:]/1000), label='Resource gap SD', alpha=0.2)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,r,1,:,55:,:]/1000), label='Resource gap STEP', alpha=0.2)
+    
+    ax[2].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
+    right_side = ax[1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1].spines["top"]
+    top.set_visible(False)
+    ax[2].set_title('c) High stock scenarios', fontsize=20)
+    ax[2].set_xlabel('Year',fontsize =18)
+    ax[2].tick_params(axis='both', which='major', labelsize=16)
+    ax[2].set_ylim([0,700])
+    ax[2].set_xlim([2015,2050])
+    ax[2].grid()
+    fig.legend(loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, -0.1), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
+    fig.savefig(os.getcwd() + '/results/overview/system_flows_alt', dpi=300)
+
 def slb_stock():
     ### SLB stock
     #for a,k in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Chemistry_Scenarios')].Items):
@@ -1252,33 +1370,33 @@ def slb_stock():
     #ax.pcolormesh(cmap=slb_cycle)
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    0, color = 'y', alpha = 0.3, label='Low STEP')
+                    0, color = 'b', alpha = 0.3, label='Low STEP')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=1
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    last, color = 'y', alpha = 0.6, label='Medium STEP')
+                    last, color = 'b', alpha = 0.6, label='Medium STEP')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=2
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    last, color = 'y', alpha = 0.9, label='High STEP')
+                    last, color = 'b', alpha = 0.9, label='High STEP')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=0
     S=1
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    last, color = 'b', alpha = 0.3, label='Low SD')
+                    last, color = 'g', alpha = 0.3, label='Low SD')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=1
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    last, color = 'b', alpha = 0.6, label='Medium SD')
+                    last, color = 'g', alpha = 0.6, label='Medium SD')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=2
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
                 MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000 ,\
-                    last, color = 'b', alpha = 0.9, label='High SD')
+                    last, color = 'g', alpha = 0.9, label='High SD')
     last = MaTrace_System.StockDict['P_6'].Values[z,S,a,R,r,:,0,55::].sum(axis=0)/1000000
     z=0
     S=2
@@ -1458,12 +1576,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[0,0].spines["top"]
     top.set_visible(False)
-    ax[0,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
-
+    ax[0,0].grid()
     ## Plot Li
     ax[0,1].set_prop_cycle(custom_cycler)
     e = 0 # Li
@@ -1498,12 +1615,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[0,1].spines["top"]
     top.set_visible(False)
-    ax[0,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
-    
+    ax[0,1].grid()
     ## Plot Co
     ax[1,0].set_prop_cycle(custom_cycler)
     e = 6 # Co
@@ -1537,12 +1653,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
     top.set_visible(False)
-    ax[1,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
-    
+    ax[1,0].grid()
     ## Plot P
     ax[1,1].set_prop_cycle(custom_cycler)
     e = 4 # P
@@ -1576,12 +1691,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
-    ax[1,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[1,1].set_title('d) Phosphorous', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
-
+    ax[1,1].grid()
     ## Plot Al
     ax[2,0].set_prop_cycle(custom_cycler)
     e = 2 # Al
@@ -1615,12 +1729,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[2,0].spines["top"]
     top.set_visible(False)
-    ax[2,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
-    
+    ax[2,0].grid()
     ## Plot Graphite
     ax[2,1].set_prop_cycle(custom_cycler)
     e = 1 # Graphite
@@ -1654,12 +1767,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
     top.set_visible(False)
-    ax[2,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
-    
+    ax[2,1].grid()
     
     ## Plot Mn
     ax[3,0].set_prop_cycle(custom_cycler)
@@ -1694,12 +1806,11 @@ def strategies_comparative():
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
     top.set_visible(False)
-    ax[3,0].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[3,0].set_title('g) Manganese', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
-    
+    ax[3,0].grid()
     
     ## Plot Si
     ax[3,1].set_prop_cycle(custom_cycler)
@@ -1710,35 +1821,38 @@ def strategies_comparative():
     R = 0 # LFP reuse
     h = 1 # Hydrometallurgical
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4)
+                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, linewidth=4, label='Baseline')
     a = 1 # High LFP
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, label='Shift to LFP')
     a = 6 # BNEF
     R = 2 # All reuse
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+                np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, label = 'Second-life')
     R = 0 # LFP reused
     z = 0 # Low
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-            np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+            np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, label = 'Fleet reduction')
     z = 1 # Low
     h = 0 # Direct
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-            np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000)
+            np.einsum('pt->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,r,:,e,h,65::])/1000000, label = 'Efficient recycling')
     h = 1 # Hydro
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-            np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000)
+            np.einsum('pt->t', e01_replacements[z,S,a,R,r,:,e,h,65::])/1000000, label = 'Reuse and replacements')
     ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
     top = ax[3,1].spines["top"]
     top.set_visible(False)
-    ax[3,1].legend(['Business as usual', 'Shift to LFP', 'Second-life', 'Fleet reduction', 'Efficient recycling', 'Replacements and reuse'], loc='upper left',prop={'size':15})
     ax[3,1].set_title('h) Silicon', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    ax[3,1].grid()
+    
+    fig.suptitle('Primary resource use sensitivity to parameters', fontsize=30, y=0.92)
+    fig.legend(loc='lower left', prop={'size':20}, bbox_to_anchor =(0.2, 0.05), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
     fig.savefig(os.getcwd() + '/results/overview/resource_strategies', dpi=300)
 
 def sensitivity_analysis():
@@ -2653,7 +2767,7 @@ def sensitivity_analysis_newcolor():
     fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, 0), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
     #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
     # Add title
-    fig.suptitle('Resource use per technology used to meet storage demand', fontsize=25)
+    fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
     fig.subplots_adjust(top=0.92, bottom=0.08)
     fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_cool', dpi=300)
 
@@ -3197,13 +3311,14 @@ def sensitivity_table():
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
     
-
 def export_P():
     results = os.path.join(os.getcwd(), 'results')
     #np.save(results+'/arrays/P_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,4,:,:])/1000)
     
 def export_Li():
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
+
+# %%
 
 # %%
 def model_case_6():
