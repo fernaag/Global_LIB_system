@@ -2814,9 +2814,9 @@ def sensitivity_analysis_newcolor():
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3)
-    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
@@ -2864,9 +2864,9 @@ def sensitivity_analysis_newcolor():
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3)
-    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                     scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
@@ -2911,11 +2911,11 @@ def sensitivity_analysis_newcolor():
     
     ax[1,0].set_prop_cycle(scen_cycler)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
-    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2962,11 +2962,11 @@ def sensitivity_analysis_newcolor():
     
     ax[1,1].set_prop_cycle(scen_cycler)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
-    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3013,11 +3013,11 @@ def sensitivity_analysis_newcolor():
     
     ax[2,0].set_prop_cycle(scen_cycler)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
-    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3064,11 +3064,11 @@ def sensitivity_analysis_newcolor():
     
     ax[2,1].set_prop_cycle(scen_cycler)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
-    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3116,11 +3116,11 @@ def sensitivity_analysis_newcolor():
     
     ax[3,0].set_prop_cycle(scen_cycler)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
-    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3168,13 +3168,13 @@ def sensitivity_analysis_newcolor():
     
     ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Resource efficient')
-    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         slow[e,65::]/1000000, linewidth=3, label='Slow transitoin')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3, label='Baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Efficient recycling ')
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Resource efficient')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        resource[e,65::]/1000000,  linewidth=3, label='Focus on electrification')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         scen_5[e,65::]/1000000,  linewidth=3, label='Resource intensive')
     ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
@@ -3694,56 +3694,61 @@ def sensitivity_table():
                                 & (primary_materials.Reuse_Scenario == 'Direct recycling')
                                 & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
     shift_to_lfp.reset_index(inplace=True, drop=True)
-    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
-    shift_to_lfp = shift_to_lfp.style.background_gradient(cmap=cm)
-    
+    shift_to_lfp.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    shift_to_lfp.set_index('Element', inplace=True)
+    shift_to_lfp.rename(columns={'value':'Shift to LFP'}, inplace=True)
+
     all_reused = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
                                 & (primary_materials.Reuse_Scenario == 'All reused')
                                 & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
     all_reused.reset_index(inplace=True, drop=True)
-    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
-    all_reused = all_reused.style.background_gradient(cmap=cm)
-    
+    all_reused.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    all_reused.set_index('Element', inplace=True)
+    all_reused.rename(columns={'value':'All reused'}, inplace=True)
+
     fleet_reduction = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Low')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
                                 & (primary_materials.Reuse_Scenario == 'Direct recycling')
                                 & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
     fleet_reduction.reset_index(inplace=True, drop=True)
-    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
-    fleet_reduction = fleet_reduction.style.background_gradient(cmap=cm)
-    
+    fleet_reduction.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    fleet_reduction.set_index('Element', inplace=True)
+    fleet_reduction.rename(columns={'value':'Smaller fleet'}, inplace=True)
+
+
     eff_recycling = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
                                 & (primary_materials.Reuse_Scenario == 'Direct recycling')
                                 & (primary_materials.Recycling_Process == 'Direct')]
     eff_recycling.reset_index(inplace=True, drop=True)
-    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
-    eff_recycling = eff_recycling.style.background_gradient(cmap=cm)
-    
+    eff_recycling.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    eff_recycling.set_index('Element', inplace=True)
+    eff_recycling.rename(columns={'value':'Efficient recycling'}, inplace=True)
+
     faster_ev = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'Net Zero')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
                                 & (primary_materials.Reuse_Scenario == 'Direct recycling')
                                 & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
     faster_ev.reset_index(inplace=True, drop=True)
-    cm = sns.diverging_palette(240, 10, n=8, as_cmap=True)
-    faster_ev = faster_ev.style.background_gradient(cmap=cm)
-                        
-                        
+    faster_ev.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    faster_ev.set_index('Element', inplace=True)
+    faster_ev.rename(columns={'value':'Faster electrification'}, inplace=True)
+
+    # Concatenating everything into table
+    table = pd.concat([shift_to_lfp, all_reused, fleet_reduction, eff_recycling, faster_ev], axis=1)
+    #table.reset_index(drop=True, inplace=True)
+    cm = sns.diverging_palette(240, 10, n=10, as_cmap=True)
+    table = table.style.background_gradient(cmap=cm, axis=None, vmax=1, vmin=-0.6)          
+
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     writer = pd.ExcelWriter(os.path.join(os.getcwd(), 'results/sensitivity_table.xlsx'), engine='xlsxwriter')
-
     # Write each dataframe to a different worksheet.
-    shift_to_lfp.to_excel(writer, sheet_name='shift_to_lfp')
-    all_reused.to_excel(writer, sheet_name='all_reused')
-    fleet_reduction.to_excel(writer, sheet_name='fleet_reduction')
-    eff_recycling.to_excel(writer, sheet_name='eff_recycling')
-    faster_ev.to_excel(writer, sheet_name='faster_ev')
-
+    table.to_excel(writer, sheet_name='results')
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
     
