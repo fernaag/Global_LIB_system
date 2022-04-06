@@ -132,6 +132,7 @@ Na = len(IndexTable.Classification[IndexTable.index.get_loc('Chemistry_Scenarios
 Nz = len(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items)
 NR = len(IndexTable.Classification[IndexTable.index.get_loc('Reuse_Scenarios')].Items)
 NE = len(IndexTable.Classification[IndexTable.index.get_loc('Energy_Storage_Scenarios')].Items)
+NV = len(IndexTable.Classification[IndexTable.index.get_loc('Size_Scenarios')].Items)
 
 
 ParameterDict = {}
@@ -166,7 +167,7 @@ ParameterDict['Segment_shares']= msc.Parameter(Name = 'Segment_shares',
                                                              ID = 3,
                                                              P_Res = None,
                                                              MetaData = None,
-                                                             Indices = 'g,s,c', #t=time, h=units
+                                                             Indices = 'V,g,s,c', #t=time, h=units
                                                              Values = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/03_scenario_data/global_model/vehicle_size/vehicleSize_motorEnergy_passengerCars.npy'), # in %
                                                              Uncert=None,
                                                              Unit = '%')
@@ -621,6 +622,7 @@ custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', '
 #%%
 # Storylines
 e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
 sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
 resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
 bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
@@ -3650,9 +3652,11 @@ def sensitivity_table():
     r=5
     ### Adding data to the dataframes
     materials = np.einsum('zSaRpeht->zSaReh', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,:,:,:])
+    materials_replacement = np.einsum('pet->e', e01_replacements[1,1,6,1,r,:,:,1,:])
+    materials_long_lt = np.einsum('pet->e', e01_long_lt[1,1,6,1,r,:,:,1,:])
     baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,1,r,:,:,1,:])
     # Calculate relative difference to baseline
-    sensitivity = np.zeros((Nz, NS, Na, NR, Ne, Nh))    
+    sensitivity = np.zeros((Nz, NS, Na, NR, Ne, Nh))
     for z in range(Nz):
         for S in range(NS):
             for a in range(Na):
@@ -3660,6 +3664,8 @@ def sensitivity_table():
                     for e in range(Ne):
                         for h in range(Nh):
                             sensitivity[z,S,a,R,e,h] = (materials[z,S,a,R,e,h]-baseline[e])/baseline[e]
+    sensitivity_replacements = (materials_replacement-baseline)/baseline
+    sensitivity_long_lt= (materials_long_lt-baseline)/baseline
     # Add values to table
     for z, stock in enumerate(
         IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items
@@ -3698,15 +3704,26 @@ def sensitivity_table():
     shift_to_lfp.set_index('Element', inplace=True)
     shift_to_lfp.rename(columns={'value':'Shift to LFP'}, inplace=True)
 
-    all_reused = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+    shift_to_NCX = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
-                                & (primary_materials.Chemistry_Scenario == 'BNEF')
-                                & (primary_materials.Reuse_Scenario == 'All reused')
+                                & (primary_materials.Chemistry_Scenario == 'NCX')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
                                 & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
-    all_reused.reset_index(inplace=True, drop=True)
-    all_reused.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
-    all_reused.set_index('Element', inplace=True)
-    all_reused.rename(columns={'value':'All reused'}, inplace=True)
+    shift_to_NCX.reset_index(inplace=True, drop=True)
+    shift_to_NCX.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    shift_to_NCX.set_index('Element', inplace=True)
+    shift_to_NCX.rename(columns={'value':'Shift to high Ni chemistries'}, inplace=True)
+
+    shift_to_next_gen = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
+                                & (primary_materials.EV_Scenario == 'SD')
+                                & (primary_materials.Chemistry_Scenario == 'Next_gen')
+                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+    shift_to_next_gen.reset_index(inplace=True, drop=True)
+    shift_to_next_gen.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Recycling_Process'], axis=1, inplace=True)
+    shift_to_next_gen.set_index('Element', inplace=True)
+    shift_to_next_gen.rename(columns={'value':'Shift to Next generation chemistries'}, inplace=True)
+
 
     fleet_reduction = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Low')
                                 & (primary_materials.EV_Scenario == 'SD')
@@ -3740,8 +3757,9 @@ def sensitivity_table():
     faster_ev.rename(columns={'value':'Faster electrification'}, inplace=True)
 
     # Concatenating everything into table
-    table = pd.concat([shift_to_lfp, all_reused, fleet_reduction, eff_recycling, faster_ev], axis=1)
-    #table.reset_index(drop=True, inplace=True)
+    table = pd.concat([shift_to_lfp, shift_to_NCX, shift_to_next_gen, fleet_reduction, eff_recycling, faster_ev], axis=1)
+    table['Replacements'] = sensitivity_replacements
+    table['Longer LIB lifetime'] = sensitivity_long_lt
     cm = sns.diverging_palette(240, 10, n=10, as_cmap=True)
     table = table.style.background_gradient(cmap=cm, axis=None, vmax=1, vmin=-0.6)          
 
@@ -3917,11 +3935,158 @@ def model_case_6():
     for R in range(NR):
         for h in range(Nh):
             MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,R,r,:,:,h,:] = np.einsum('zSabpet->zSapet', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,r,:,:,:,:]) - MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,R,r,:,:,h,:]# Solving recycling loop 
-        ## Exporting these results for latter plotting
-        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
-        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
-        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-        np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+    ## Exporting these results for latter plotting
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+
+def model_long_lt():
+    lt_cm  = np.array([16])
+    sd_cm  = np.array([4])
+
+    r=5 #choose the regions to be calculated-. r is GLOBAL
+    cap = np.zeros((NS, Nr, Ng, Ns, Nb, Nt))
+    for z in range(Nz):
+        #for r in range(0,Nr):
+            for S in range(NS):
+                for g in range(0,Ng):
+                    # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
+                    Model                                                     = pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([20]), 'StdDev': np.array([5]) }, \
+                        lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
+                    Model.case_1()
+
+                    MaTrace_System.StockDict['S_C_3'].Values[z,S,r,g,:,:,:]             = np.einsum('sc,tc->stc', MaTrace_System.ParameterDict['Segment_shares'].Values[g,:,:] ,np.einsum('c,tc->tc', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:],Model.sc_pr.copy()))
+                    MaTrace_System.StockDict['S_3'].Values[z,S,r,g,:,:]                 = np.einsum('stc->st', MaTrace_System.StockDict['S_C_3'].Values[z,S,r,g,:,:,:])
+                    MaTrace_System.FlowDict['F_2_3'].Values[z,S,r,g,:,:]              = np.einsum('sc,c->sc', MaTrace_System.ParameterDict['Segment_shares'].Values[g,:,:],np.einsum('c,c->c', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:],Model.i_pr.copy()))
+                    MaTrace_System.FlowDict['F_3_4'].Values[z,S,r,g,:,:,:]              = np.einsum('sc,tc->stc', MaTrace_System.ParameterDict['Segment_shares'].Values[g,:,:],np.einsum('c,tc->tc', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:] , Model.oc_pr.copy()))
+                    
+
+                    ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                    MaTrace_System.StockDict['M_C_3'].Values[z,S,:,r,g,:,:,:,:]     = np.einsum('abc,stc->asbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('sc,tc->stc', MaTrace_System.ParameterDict['Segment_shares'].Values[g,:,:] \
+                        ,np.einsum('c,tc->tc', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:],Model.sc_cm.copy())))
+                    MaTrace_System.StockDict['M_3'].Values[z,S,:,r,g,:,:,:]         = np.einsum('asbtc->asbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,r,g,:,:,:,:])
+                    # Battery inflows within car
+                    MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,r,g,:,:,:]        = np.einsum('abt,st->asbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,r,g,:,:])
+                    # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                    MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,r,g,:,:,:]        = np.einsum('abt,st->asbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('sc,c->sc', MaTrace_System.ParameterDict['Segment_shares'].Values[g,:,:], \
+                        np.einsum('c,c->c', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:],Model.i_cm.copy()))) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,r,g,:,:,:]
+                    # Battery outflows in car
+                    MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,r,g,:,:,:,:]   = np.einsum('abc,stc->asbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,r,g,:,:,:])
+                    MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,r,g,:,:,:]        = np.einsum('asbtc->asbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,r,g,:,:,:,:])
+                    # Batteries after vehicle has been dismantled
+                    MaTrace_System.FlowDict['M_4_5'].Values[z,S,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,r,g,:,:,:,:] 
+                    # Battery outflows due to battery failures: Total battery outflows minus vehicle outflows
+                    
+
+                    ### Battery by weight layer: Multiply the numbers by the weight factor for each chemistry and size
+                    # Stocks
+                    MaTrace_System.StockDict['B_C_3'].Values[z,S,:,r,g,:,:,:,:]     = np.einsum('sb,asbtc->asbtc', MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:] , MaTrace_System.StockDict['M_C_3'].Values[z,S,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['B_3'].Values[z,S,:,r,g,:,:,:]         = np.einsum('asbtc->asbt', MaTrace_System.StockDict['B_C_3'].Values[z,S,:,r,g,:,:,:,:])
+                    MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,r,g,:,:,:]        = np.einsum('asbt,sb->asbt', MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,r,g,:,:,:]        = np.einsum('asbt,sb->asbt', MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,r,g,:,:,:,:]   = np.einsum('asbtc,sb->asbtc', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4'].Values[z,S,:,r,g,:,:,:]        = np.einsum('asbtc->asbt', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,r,g,:,:,:,:] )
+                    MaTrace_System.FlowDict['B_4_5'].Values[z,S,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,r,g,:,:,:,:] 
+                    MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,r,g,:,:,:]        = np.einsum('asbt,sb->asbt', MaTrace_System.FlowDict['M_5_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    
+
+                    ### Battery parts layer
+                    MaTrace_System.StockDict['P_C_3'].Values[z,S,:,r,g,:,:,:,:,:]   = np.einsum('sbp,asbtc->asbptc', MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:] , MaTrace_System.StockDict['B_C_3'].Values[z,S,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['P_3'].Values[z,S,:,r,g,:,:,:,:]       = np.einsum('asbptc->asbpt', MaTrace_System.StockDict['P_C_3'].Values[z,S,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_1_3'].Values[z,S,:,r,g,:,:,:,:]      = np.einsum('asbc,sbp->asbpc', MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_2_3'].Values[z,S,:,r,g,:,:,:,:]      = np.einsum('asbc,sbp->asbpc', MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,r,g,:,:,:,:,:] = np.einsum('asbtc,sbp->asbptc', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    MaTrace_System.FlowDict['P_3_4'].Values[z,S,:,r,g,:,:,:,:]      = np.einsum('asbptc->asbpt', MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_4_5'].Values[z,S,:,r,g,:,:,:,:,:]    = MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,r,g,:,:,:,:,:]
+                    MaTrace_System.FlowDict['P_5_3'].Values[z,S,:,r,g,:,:,:,:]      = np.einsum('asbt,sbp->asbpt', MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    
+                    '''
+                    We calculate the flows of battery modules into reuse. Sicne the casing and other battery parts are assumed to go directly into recyling, 
+                    we just write this loop for the modules with index 0 and separately define that all other battery parts go to recycling. 
+                    We also consider batteries that caused vehicle outflows, as the requirements here are lower. We can take them out if it does not make sense. 
+
+                    The reuse parameter does not indicate the share of batteries that are reused. Rather, it is a condition to reflect decisions on which battery chemistries to 
+                    reuse. LFP scenario for instance will define that only LFP chemistries are considered for reuse, but they health assessment still needs to happen. 
+                    '''
+                    # Calculate inflows to SLB only for the modules. We consider batteries that came from failed vehicles as well, since flow P_3_5 only contains failed batteries
+                    MaTrace_System.FlowDict['P_5_6'].Values[z,S,:,:,r,g,:,0,:,:]  = np.einsum('Rbt,asbtc->aRbtc', MaTrace_System.ParameterDict['Reuse_rate'].Values[:,:,:], \
+                        MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,r,g,:,:,0,:,:]) # * Model_slb.sf_cm[t+tau_cm,c] + MaTrace_System.FlowDict['P_3_5'].Values[z,S,:,r,g,:,:,0,t,c]* Model_slb.sf_cm[t+tau_cm,c]) # TODO: Possibly subtract P_5_3 flow if implemented
+                    '''
+                    Since the batteries are moving from being used in transport to being used in stationary storage, the "lifetime" is no longer the same. 
+                    In transportation, we define the lifetime to be the time that the battery is still useful for that purpose, which is widely considered
+                    to be until it reaches 80% of its initial capacity. The distribution of the lifetime helps us account for batteries that are more 
+                    intensely used than others, but by the time of outflow they should all have more or less the same capacity of around 80%. 
+
+                    Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
+                    follow its own degradation curve.  
+                    '''
+    # Computing SLB stock after aggregating inflows
+    Model_slb                                                       = pcm.ProductComponentModel(t = range(0,Nt),  lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
+    # Compute the survival curve of the batteries with the additional lenght for the last tau years
+
+    '''
+    Define the SLB model in advance. We do not compute everything using the dsm as it only takes i as input
+    and takes too long to compute. Instead, we define the functions ourselves using the sf computed with dsm. 
+    '''
+    lt_slb                               = np.array([6]) # We could have different lifetimes for the different chemistries
+    sd_slb                               = np.array([2]) 
+    inflows                             = np.zeros((Nz,NS, Na, NR, Nb, Nt))
+    inflows = np.einsum('zSaRgbtc->zSaRbt',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:])
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for b in range(Nb):
+                        slb_model                        = dsm.DynamicStockModel(t=range(0,Nt), lt={'Type': 'Normal', 'Mean': lt_slb, 'StdDev': sd_slb}, i=inflows[z,S,a,R,b,:])
+                        slb_model.compute_s_c_inflow_driven()
+                        slb_model.compute_o_c_from_s_c()
+                        slb_model.compute_stock_total()
+                        MaTrace_System.StockDict['P_C_6'].Values[z,S,a,R,r,b,0,:,:] = slb_model.s_c.copy()
+                        MaTrace_System.FlowDict['P_6_7'].Values[z,S,a,R,r,b,0,:,:] = slb_model.o_c.copy()
+    '''
+    We will leave this other approach for the moment
+    MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:]     = np.einsum('zSaRbt,tc->zSaRbtc', np.einsum('zSaRgbtc->zSaRbt',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]), slb_model.sf)
+    # Compute SLB outflows
+    MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,1::,:]    = -1 * np.diff(MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:], n=1, axis=5) # Difference over time -> axis=3
+    for t in range(Nt):
+        MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,t,t]  = np.einsum('zSaRgbtc->zSaRb',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]) - MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,t,t]
+    '''
+    # Compute total stock
+    MaTrace_System.StockDict['P_6'].Values[:,:,:,:,r,:,0,:]         = np.einsum('zSaRbtc->zSaRbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:])
+    MaTrace_System.FlowDict['P_7_8'].Values[:,:,:,:,r,:,0,:,:]                  = MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,:,:]
+    # Calculate battery parts going directly to recycling: Total outflows minus reuse
+    for R in range(NR):
+        MaTrace_System.FlowDict['P_5_8'].Values[:,:,:,R,r,:,:,:,:]            =  np.einsum('zSagsbptc->zSabptc', MaTrace_System.FlowDict['P_3_4_tc'].Values[:,:,:,r,:,:,:,:,:,:]) - np.einsum('zSagbptc->zSabptc',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,R,r,:,:,:,:,:])
+
+    ### Material layer
+    MaTrace_System.StockDict['E_3'].Values[:,:,:,r,:,:,:,:]           = np.einsum('zSagsbpt,gbpe->zSabpet', MaTrace_System.StockDict['P_3'].Values[:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:])
+    MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,r,:,:,:,:]          = np.einsum('zSagsbpc,gbpe->zSabpec', MaTrace_System.FlowDict['P_1_3'].Values[:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,r,:,:,:,:]          = np.einsum('zSagsbpc,gbpe->zSabpec', MaTrace_System.FlowDict['P_2_3'].Values[:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_3_4'].Values[:,:,:,r,:,:,:,:]          = np.einsum('zSagsbpt,gbpe->zSabpet', MaTrace_System.FlowDict['P_3_4'].Values[:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_4_5'].Values[:,:,:,r,:,:,:]            = MaTrace_System.FlowDict['E_3_4'].Values[z,S,:,r,:,:,:,:]
+    MaTrace_System.FlowDict['E_3_5'].Values[:,:,:,r,:,:,:,:]          = np.einsum('zSagsbptc,gbpe->zSabpet', MaTrace_System.FlowDict['P_3_5'].Values[:,:,:,r,:,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_5_3'].Values[:,:,:,r,:,:,:,:]          = np.einsum('zSagsbpt,gbpe->zSabpet', MaTrace_System.FlowDict['P_5_3'].Values[:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_5_6'].Values[:,:,:,:,r,:,:,:,:]        = np.einsum('zSaRgbptc,gbpe->zSaRbpet', MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_5_8'].Values[:,:,:,:,r,:,:,:,:]        = np.einsum('zSaRbptc,gbpe->zSaRbpet', MaTrace_System.FlowDict['P_5_8'].Values[:,:,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_6_7'].Values[:,:,:,:,r,:,:,:,:]        = np.einsum('zSaRbptc,gbpe->zSaRbpet', MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+    MaTrace_System.FlowDict['E_7_8'].Values[:,:,:,:,r,:,:,:,:]        = np.einsum('zSaRbptc,gbpe->zSaRbpet', MaTrace_System.FlowDict['P_7_8'].Values[:,:,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
+
+
+    # Solving energy layer: Multiply stocks with capacity and degradation parameters
+    MaTrace_System.StockDict['C_3'].Values[:,:,:,:,:,:,:] = np.einsum('zSargsbptc, btc->zSargbt', np.einsum('zSargsbptc, bpc -> zSargsbptc', MaTrace_System.StockDict['P_C_3'].Values[:,:,:,:,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
+    MaTrace_System.StockDict['C_6'].Values[:,:,:,:,:,:,:] = np.einsum('zSaRrbptc, btc->zSaRrbt', np.einsum('zSaRrbptc, bpc -> zSaRrbptc', MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,:,:,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
+
+
+    MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,r,:,:,:,:] = np.einsum('eh, zSaRbpet->zSaRpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[:,:,:,:,r,:,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[:,:,:,:,r,:,:,:,:]))
+    for R in range(NR):
+        for h in range(Nh):
+            MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,R,r,:,:,h,:] = np.einsum('zSabpet->zSapet', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,r,:,:,:,:]) - MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,R,r,:,:,h,:]# Solving recycling loop
+    ## Exporting these results for latter plotting
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E01_long_lt', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output//E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 # %%
 
