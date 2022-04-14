@@ -625,15 +625,14 @@ from cycler import cycler
 import seaborn as sns
 r=5
 custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
-#%%
 # Storylines
-e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
-e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
-sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0) # z,S,a,R,V,r,p,e,h,t
-resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,1,r,:,:,0,:].sum(axis=0)
-bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
-slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,1,r,:,:,1,:].sum(axis=0)
-scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
+# e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+# e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
+# sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0) # z,S,a,R,V,r,p,e,h,t
+# resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,1,r,:,:,0,:].sum(axis=0)
+# bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
+# slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,1,r,:,:,1,:].sum(axis=0)
+# scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
 #%% 
 def results_Sofia():
     # Exporting results for Sofia
@@ -2384,6 +2383,145 @@ def strategies_comparative():
     fig.legend(loc='lower left', prop={'size':20}, bbox_to_anchor =(0.2, 0.05), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
     fig.savefig(os.getcwd() + '/results/overview/resource_strategies', dpi=600, bbox_inches = 'tight')
 
+def sensitivity_over_time():
+    from cycler import cycler
+    import seaborn as sns
+    r=5
+    custom_cycler = (cycler(color=sns.color_palette('Set1', 5)) *
+                     cycler(linestyle=['-', '--']))
+    #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+        # Define storylines
+    fig, ax = plt.subplots(4,2,figsize=(20,28))
+    baseline = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
+    z = 1
+    S = 1
+    R = 0
+    V = 1
+    h = 1
+    ax[0,0].set_prop_cycle(custom_cycler)
+    a = 1 # High LFP
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[0,0].set_title('a) Shift to LFP', fontsize=20)
+    ax[0,0].set_xlabel('Year',fontsize =16)
+    ax[0,0].tick_params(axis='both', which='major', labelsize=18)
+    ax[0,0].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[0,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,0].spines["top"]
+    top.set_visible(False)
+    
+    ax[0,1].set_prop_cycle(custom_cycler)
+    a = 0 # NCX
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[0,1].set_title('b) Shift to high Ni', fontsize=20)
+    ax[0,1].set_xlabel('Year',fontsize =16)
+    ax[0,1].tick_params(axis='both', which='major', labelsize=18)
+    ax[0,1].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[0,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0,1].spines["top"]
+    top.set_visible(False)
+    
+    ax[1,0].set_prop_cycle(custom_cycler)
+    a = 2 # Next gen
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[1,0].set_title('c) Shift to next gen.', fontsize=20)
+    ax[1,0].set_xlabel('Year',fontsize =16)
+    ax[1,0].tick_params(axis='both', which='major', labelsize=18)
+    ax[1,0].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[1,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,0].spines["top"]
+    top.set_visible(False)
+    
+    ax[1,1].set_prop_cycle(custom_cycler)
+    a = 6 # Base
+    z = 0
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[1,1].set_title('d) Smaller fleet', fontsize=20)
+    ax[1,1].set_xlabel('Year',fontsize =16)
+    ax[1,1].tick_params(axis='both', which='major', labelsize=18)
+    ax[1,1].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[1,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1,1].spines["top"]
+    top.set_visible(False)
+    
+    ax[2,0].set_prop_cycle(custom_cycler)
+    z = 1 # Base
+    h = 0
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[2,0].set_title('e) Efficient recycling', fontsize=20)
+    ax[2,0].set_xlabel('Year',fontsize =16)
+    ax[2,0].tick_params(axis='both', which='major', labelsize=18)
+    ax[2,0].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[2,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,0].spines["top"]
+    top.set_visible(False)
+    
+    ax[2,1].set_prop_cycle(custom_cycler)
+    h = 1 # Base
+    S = 2
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[2,1].set_title('f) Faster electrification', fontsize=20)
+    ax[2,1].set_xlabel('Year',fontsize =16)
+    ax[2,1].tick_params(axis='both', which='major', labelsize=18)
+    ax[2,1].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[2,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[2,1].spines["top"]
+    top.set_visible(False)
+    
+    ax[3,0].set_prop_cycle(custom_cycler)
+    S = 1 # Base
+    V = 0
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::], linewidth=2)
+    ax[3,0].set_title('g) Smaller batteries', fontsize=20)
+    ax[3,0].set_xlabel('Year',fontsize =16)
+    ax[3,0].tick_params(axis='both', which='major', labelsize=18)
+    ax[3,0].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[3,0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,0].spines["top"]
+    top.set_visible(False)
+    
+    ax[3,1].set_prop_cycle(custom_cycler)
+    V = 1 # Base
+    for e in range(Ne-1): # Don't include "other materials"
+        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                (e01_replacements[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::], linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+    ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
+    ax[3,1].set_xlabel('Year',fontsize =16)
+    ax[3,1].tick_params(axis='both', which='major', labelsize=18)
+    ax[3,1].set_ylabel('Change [%]',fontsize =18)
+    right_side = ax[3,1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[3,1].spines["top"]
+    top.set_visible(False)
+    
+    fig.legend(loc='lower left', prop={'size':25}, bbox_to_anchor =(0.25, 0.03), ncol = 5, columnspacing = 1, handletextpad = 0.5, handlelength = 2)
+    fig.suptitle('Sensitivity to change in parameter over time', fontsize=30)
+    fig.subplots_adjust(top=0.92)
+    fig.savefig(os.getcwd() + '/results/overview/sensitivity_over_time', dpi=600, bbox_inches='tight')
+
+    
 def sensitivity_analysis():
     from cycler import cycler
     import seaborn as sns
@@ -3310,18 +3448,18 @@ def sensitivity_analysis_complete():
     # Load replacement results
     e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
-    sustainable = e01_replacements[0,2,2,2,0,r,:,:,0,:].sum(axis=0)
-    resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,1,r,:,:,0,:].sum(axis=0)
+    sustainable = e01_replacements[0,2,2,0,0,r,:,:,0,:].sum(axis=0)
+    resource = MaTrace_System.FlowDict['E_0_1'].Values[2,2,6,0,1,r,:,:,2,:].sum(axis=0)
     bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
-    slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,1,r,:,:,1,:].sum(axis=0)
-    scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
+    slow = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,0,1,r,:,:,1,:].sum(axis=0)
+    scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,0,0,1,r,:,:,1,:].sum(axis=0)
 
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     # Define sensitivity analysis for Ni
     e = 7 # Ni
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3373,7 +3511,7 @@ def sensitivity_analysis_complete():
     e = 0 # Li
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3424,7 +3562,7 @@ def sensitivity_analysis_complete():
     e = 6 # Co
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3476,7 +3614,7 @@ def sensitivity_analysis_complete():
     e = 4 # P
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3518,7 +3656,7 @@ def sensitivity_analysis_complete():
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
-    ax[1,1].set_title('d) Phosphorous', fontsize=20)
+    ax[1,1].set_title('d) Phosphorus', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     #ax.set_ylim([0,5])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
@@ -3528,7 +3666,7 @@ def sensitivity_analysis_complete():
     e = 2 # Al
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3580,7 +3718,7 @@ def sensitivity_analysis_complete():
     e = 1 # Graphite
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3633,7 +3771,7 @@ def sensitivity_analysis_complete():
     e = 5 # Mn
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3686,7 +3824,7 @@ def sensitivity_analysis_complete():
     e = 3 # Si
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,5,6]:
+            for a in [0,1,2,4,6]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -3714,15 +3852,15 @@ def sensitivity_analysis_complete():
     
     ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Slow transitoin')
+                                        slow[e,65::]/1000000, linewidth=3, label='Scenario 5')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Baseline')
+                                        bau[e,65::]/1000000,  linewidth=3, label='Scenario 1 - Baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Resource efficient')
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Scenario 2')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Focus on electrification')
+                                        resource[e,65::]/1000000,  linewidth=3, label='Scenario 3')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Resource intensive')
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 4')
     ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
@@ -3751,7 +3889,7 @@ def sensitivity_analysis_complete():
     # Add title
     fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
     fig.subplots_adjust(top=0.92, bottom=0.08)
-    fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_complete', dpi=600, bbox_layout='tight')
+    fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_complete', dpi=600, bbox_inches='tight')
 
 def sensitivity_analysis_grey():
     from cycler import cycler
