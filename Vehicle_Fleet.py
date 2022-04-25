@@ -547,14 +547,7 @@ for z in range(Nz):
                         slb_model.compute_stock_total()
                         MaTrace_System.StockDict['P_C_6'].Values[z,S,a,R,V,r,b,0,:,:] = slb_model.s_c.copy()
                         MaTrace_System.FlowDict['P_6_7'].Values[z,S,a,R,V,r,b,0,:,:] = slb_model.o_c.copy()
-'''
-We will leave this other approach for the moment
-MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:]     = np.einsum('zSaRbt,tc->zSaRbtc', np.einsum('zSaRgbtc->zSaRbt',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]), slb_model.sf)
-# Compute SLB outflows
-MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,1::,:]    = -1 * np.diff(MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:], n=1, axis=5) # Difference over time -> axis=3
-for t in range(Nt):
-    MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,t,t]  = np.einsum('zSaRgbtc->zSaRb',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]) - MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,t,t]
-'''
+
 #%%
 # Compute total stock
 MaTrace_System.StockDict['P_6'].Values[:,:,:,:,:,r,:,0,:]         = np.einsum('zSaRVbtc->zSaRVbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,:,r,:,0,:,:])
@@ -579,54 +572,17 @@ for z in range(Nz):
             MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_5_8'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
             MaTrace_System.FlowDict['E_6_7'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_6_7'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
             MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_7_8'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
-
-
-            # Solving energy layer: Multiply stocks with capacity and degradation parameters
-            # MaTrace_System.StockDict['C_3'].Values[z,:,a,:,:,r,:,:] = np.einsum('SVgsbptc, btc->SVgt', np.einsum('SVgsbptc, bpc -> SVgsbptc', MaTrace_System.StockDict['P_C_3'].Values[z,:,a,:,r,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
-            # MaTrace_System.StockDict['C_6'].Values[z,:,a,:,:,r,:] = np.einsum('SRVbptc, btc->SRVt', np.einsum('SRVbptc, bpc -> SRVbptc', MaTrace_System.StockDict['P_C_6'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
-
-
             MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,:,:,r,:,:,:,:] = np.einsum('eh, SRVpet->SRVpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]))
             for R in range(NR):
                 for h in range(Nh):
                     MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
+
 # %%
-# # Exporting vehicle flows
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/vehicle_stock_array', np.einsum('zSrgst->zSrgt', MaTrace_System.StockDict['S_3'].Values[:,:,:,:,:,:]), allow_pickle=True)
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/vehicle_outflow_array', np.einsum('zSrgstc->zSrgt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:]), allow_pickle=True)
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/vehicle_inflow_array', np.einsum('zSrgst->zSrgt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:]), allow_pickle=True)
-
-# # Exporting battery flows
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/battery_inflow_array', np.einsum('zSargsbpt->zSarbpt', MaTrace_System.FlowDict['P_2_3'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True) # z,S,a,r,g,s,b,p,t
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/battery_outflow_array', np.einsum('zSargsbpt->zSarbpt', MaTrace_System.FlowDict['P_3_4'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True) # z,S,a,r,g,s,b,p,t
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/battery_reuse_array', np.einsum('zSaRrgbptc->zSaRrbpt', MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,:,:,:,:,:,:]), allow_pickle=True) # z,S,a,R,r,g,s,b,p,t,c
-# # np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/battery_reuse_to_recycling_array',  MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,:,:,:,:], allow_pickle=True) # zSaRrbpt
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/battery_recycling_array',  np.einsum('zSaRrbptc->zSaRrbpt' ,MaTrace_System.FlowDict['P_5_8'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True)
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/slb_stock_array', MaTrace_System.StockDict['P_6'].Values[:,:,:,:,:,:,:,:], allow_pickle=True) # z,S,a,R,r,g,s,b,p,t,c
-
-
-# # Exporting material flows
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_inflow_array',  MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:], allow_pickle=True) # zSaRrpet
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_outflow_array', np.einsum('zSarbpet->zSarept', MaTrace_System.FlowDict['E_3_4'].Values[:,:,:,:,:,:,:,:]), allow_pickle=True) # z,S,a,r,g,s,b,p,e,t
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_reuse_array', np.einsum('zSaRrbpet->zSaRrept', MaTrace_System.FlowDict['E_5_6'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True) # z,S,a,R,r,g,s,b,p,e,t,cnp.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_reuse_to_recycling_array',  MaTrace_System.FlowDict['E_6_7'].Values[:,:,:,:,:,:,:,:], allow_pickle=True) # zSaRrpet
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_recycling_array',  np.einsum('zSaRrbpet->zSaRrept' ,MaTrace_System.FlowDict['E_5_8'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True)
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_recycled_process_array', np.einsum('zSaRrpeht->zSaRrepht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True)
-# np.save('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/arrays/material_losses_array', np.einsum('zSaRrpeht->zSaRrept', MaTrace_System.FlowDict['E_8_0'].Values[:,:,:,:,:,:,:,:,:]), allow_pickle=True)
-
-# ### Exporting Equinor data
-# np.save('/Users/fernaag/Box/BATMAN/Partners/Equinor/material_demand_NCX', np.einsum('rgsbpet->et', MaTrace_System.FlowDict['E_1_3'].Values[1,1,0,:,:,:,:,:,:,70:]/1000000)) # Demand
-# np.save('/Users/fernaag/Box/BATMAN/Partners/Equinor/material_demand_LFP', np.einsum('rgsbpet->et', MaTrace_System.FlowDict['E_1_3'].Values[1,1,1,:,:,:,:,:,:,70:]/1000000)) # Demand
-# np.save('/Users/fernaag/Box/BATMAN/Partners/Equinor/average_recycled_content',  (np.einsum('rpeht->et', MaTrace_System.FlowDict['E_8_1'].Values[1,1,0,1,:,:,:,:,70:])/1000000 / np.einsum('rgsbpet->et', MaTrace_System.FlowDict['E_1_3'].Values[1,1,0,:,:,:,:,:,:,70:]/1000000) + \
-#         np.einsum('rpeht->et', MaTrace_System.FlowDict['E_8_1'].Values[1,1,1,1,:,:,:,:,70:]/1000000)/np.einsum('rgsbpet->et', MaTrace_System.FlowDict['E_1_3'].Values[1,1,1,:,:,:,:,:,:,70:]/1000000))/2*100) # Maximum available materials
-# # Set color cycles
-# #MaTrace_System.FlowDict['E_8_1'] = msc.Flow(Name = 'Secondary materials for battery produciton', P_Start = 8, P_End = 1,
-# #                                            Indices = 'z,S,a,R,r,p,e,h,t', Values=None)
+# Storylines
 from cycler import cycler
 import seaborn as sns
 r=5
 custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
-# %%
-# Storylines
 e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
 e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
 e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
@@ -2398,7 +2354,7 @@ def sensitivity_over_time():
     
         # Define storylines
     fig, ax = plt.subplots(4,2,figsize=(20,28))
-    baseline = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
+    baseline = MaTrace_System.FlowDict['E_0_1'].Values[1,1,5,0,1,r,:,:,1,:].sum(axis=0)
     z = 1
     S = 1
     R = 0
@@ -2447,7 +2403,7 @@ def sensitivity_over_time():
     top.set_visible(False)
     
     ax[1,1].set_prop_cycle(custom_cycler)
-    a = 6 # Base
+    a = 5 # Base
     z = 0
     for e in range(Ne-1): # Don't include "other materials"
         ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -2510,7 +2466,7 @@ def sensitivity_over_time():
     V = 1 # Base
     for e in range(Ne-1): # Don't include "other materials"
         ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (e01_replacements[1,1,6,0,1,r,:,e,1,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+                (e01_replacements[1,1,5,0,1,r,:,e,1,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
     ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -4746,14 +4702,6 @@ def model_long_lt():
                             slb_model.compute_stock_total()
                             MaTrace_System.StockDict['P_C_6'].Values[z,S,a,R,V,r,b,0,:,:] = slb_model.s_c.copy()
                             MaTrace_System.FlowDict['P_6_7'].Values[z,S,a,R,V,r,b,0,:,:] = slb_model.o_c.copy()
-    '''
-    We will leave this other approach for the moment
-    MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:]     = np.einsum('zSaRbt,tc->zSaRbtc', np.einsum('zSaRgbtc->zSaRbt',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]), slb_model.sf)
-    # Compute SLB outflows
-    MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,1::,:]    = -1 * np.diff(MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,:,:], n=1, axis=5) # Difference over time -> axis=3
-    for t in range(Nt):
-        MaTrace_System.FlowDict['P_6_7'].Values[:,:,:,:,r,:,0,t,t]  = np.einsum('zSaRgbtc->zSaRb',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,r,:,:,0,:,:]) - MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,r,:,0,t,t]
-    '''
   
     # Compute total stock
     MaTrace_System.StockDict['P_6'].Values[:,:,:,:,:,r,:,0,:]         = np.einsum('zSaRVbtc->zSaRVbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,:,r,:,0,:,:])
@@ -4778,14 +4726,7 @@ def model_long_lt():
                 MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_5_8'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
                 MaTrace_System.FlowDict['E_6_7'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_6_7'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
                 MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:]        = np.einsum('SRVbptc,gbpe->SRVpet', MaTrace_System.FlowDict['P_7_8'].Values[z,:,a,:,:,r,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
-
-
-                # Solving energy layer: Multiply stocks with capacity and degradation parameters
-                # MaTrace_System.StockDict['C_3'].Values[z,:,a,:,:,r,:,:] = np.einsum('SVgsbptc, btc->SVgt', np.einsum('SVgsbptc, bpc -> SVgsbptc', MaTrace_System.StockDict['P_C_3'].Values[z,:,a,:,r,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
-                # MaTrace_System.StockDict['C_6'].Values[z,:,a,:,:,r,:] = np.einsum('SRVbptc, btc->SRVt', np.einsum('SRVbptc, bpc -> SRVbptc', MaTrace_System.StockDict['P_C_6'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Capacity'].Values[:,:,:]),  MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
-
-
-                MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,:,:,r,:,:,:,:] = np.einsum('eh, SRVpet->SRVpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]))
+                MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,:,:,r,:,:,:,:]      = np.einsum('eh, SRVpet->SRVpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]))
                 for R in range(NR):
                     for h in range(Nh):
                         MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
@@ -4794,5 +4735,7 @@ def model_long_lt():
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+
+# %%
 
 # %%
