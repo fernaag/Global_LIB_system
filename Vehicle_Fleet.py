@@ -560,7 +560,7 @@ for R in range(NR):
 ### Material layer
 for z in range(Nz):
     # for S in range(NS):
-        for a in range(7):
+        for a in range(Na):
             MaTrace_System.StockDict['E_3'].Values[z,:,a,:,r,:,:,:]           = np.einsum('SVgsbpt,gbpe->SVpet', MaTrace_System.StockDict['P_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:])
             MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:]          = np.einsum('SVgsbpc,gbpe->SVpec', MaTrace_System.FlowDict['P_1_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
             MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:]          = np.einsum('SVgsbpc,gbpe->SVpec', MaTrace_System.FlowDict['P_2_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
@@ -575,7 +575,7 @@ for z in range(Nz):
             MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,:,:,r,:,:,:,:] = np.einsum('eh, SRVpet->SRVpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]))
             for R in range(NR):
                 for h in range(Nh):
-                    MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
+                    MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:] + MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
 
 # %%
 # Storylines
@@ -585,6 +585,7 @@ r=5
 custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
 e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
 e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
+e23_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt.npy')
 e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
 # sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0) # z,S,a,R,V,r,p,e,h,t
 # resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,1,r,:,:,0,:].sum(axis=0)
@@ -2363,8 +2364,8 @@ def sensitivity_over_time():
     ax[0,0].set_prop_cycle(custom_cycler)
     a = 1 # High LFP
     for e in range(Ne-1): # Don't include "other materials"
-        ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[0,0].set_title('a) Shift to LFP', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2377,8 +2378,8 @@ def sensitivity_over_time():
     ax[0,1].set_prop_cycle(custom_cycler)
     a = 0 # NCX
     for e in range(Ne-1): # Don't include "other materials"
-        ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[0,1].set_title('b) Shift to high Ni', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2391,8 +2392,8 @@ def sensitivity_over_time():
     ax[1,0].set_prop_cycle(custom_cycler)
     a = 2 # Next gen
     for e in range(Ne-1): # Don't include "other materials"
-        ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[1,0].set_title('c) Shift to next gen.', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2406,8 +2407,8 @@ def sensitivity_over_time():
     a = 5 # Base
     z = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)-baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[1,1].set_title('d) Smaller fleet', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2421,8 +2422,8 @@ def sensitivity_over_time():
     z = 1 # Base
     h = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[2,0].set_title('e) Efficient recycling', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2436,8 +2437,8 @@ def sensitivity_over_time():
     h = 1 # Base
     S = 2
     for e in range(Ne-1): # Don't include "other materials"
-        ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[2,1].set_title('f) Faster electrification', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2451,8 +2452,8 @@ def sensitivity_over_time():
     S = 1 # Base
     V = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2)
+        ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
     ax[3,0].set_title('g) Smaller batteries', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2465,8 +2466,8 @@ def sensitivity_over_time():
     ax[3,1].set_prop_cycle(custom_cycler)
     V = 1 # Base
     for e in range(Ne-1): # Don't include "other materials"
-        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                (e01_replacements[1,1,5,0,1,r,:,e,1,65::].sum(axis=0)- baseline[e,65::])/baseline[e,65::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                (e01_long_lt[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
     ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -4193,6 +4194,16 @@ def sensitivity_analysis_grey():
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis_grey', dpi=300)
 
+    for e in range(Ne-1): # Don't include "other materials"
+            ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                    MaTrace_System.FlowDict['E_0_1'].Values[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)/1000, linewidth=2)
+            ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                    e01_long_lt[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)/1000, linewidth=2)
+            ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                    MaTrace_System.FlowDict['E_2_3'].Values[1,1,5,1,r,:,e,70::].sum(axis=0)/1000, linewidth=2)
+            ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
+                    e23_long_lt[1,1,5,1,r,:,e,70::].sum(axis=0)/1000, linewidth=2)
+    
 def Ni_strategies_combined():
     from cycler import cycler
     import seaborn as sns
@@ -4590,7 +4601,7 @@ def model_case_6():
                 MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,:,:,r,:,:,:,:] = np.einsum('eh, SRVpet->SRVpeht', MaTrace_System.ParameterDict['Recycling_efficiency'].Values[:,:], (MaTrace_System.FlowDict['E_7_8'].Values[z,:,a,:,:,r,:,:,:] + MaTrace_System.FlowDict['E_5_8'].Values[z,:,a,:,:,r,:,:,:]))
                 for R in range(NR):
                     for h in range(Nh):
-                        MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
+                        MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:] + MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# Solving recycling loop z,S,a,R,V,r,p,e,h,t
 ## Exporting these results for latter plotting
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
@@ -4609,7 +4620,7 @@ def model_long_lt():
             for S in range(NS):
                 for g in range(0,Ng):
                     # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
-                    Model                                                     = pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([20]), 'StdDev': np.array([5]) }, \
+                    Model                                                     = pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([5]) }, \
                         lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
                     Model.case_3()
 
