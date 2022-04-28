@@ -2469,7 +2469,7 @@ def sensitivity_over_time():
     V = 1 # Base
     for e in range(Ne-1): # Don't include "other materials"
         ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (e01_long_lt[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+                (e01_replacements[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
     ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -3411,8 +3411,8 @@ def sensitivity_analysis_complete():
     e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     sustainable = e01_replacements[0,2,2,0,0,r,:,:,0,:].sum(axis=0)
-    resource = MaTrace_System.FlowDict['E_0_1'].Values[2,2,6,0,1,r,:,:,2,:].sum(axis=0)
-    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
+    resource = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,0,1,r,:,:,2,:].sum(axis=0)
+    bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,5,0,1,r,:,:,1,:].sum(axis=0)
     slow = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,0,1,r,:,:,1,:].sum(axis=0)
     scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,0,0,1,r,:,:,1,:].sum(axis=0)
 
@@ -4389,9 +4389,9 @@ def sensitivity_table():
     r=5
     ### Adding data to the dataframes
     materials = np.einsum('zSaRVpeht->zSaRVeh', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,:,:,:])
-    materials_replacement = np.einsum('pet->e', e01_replacements[1,1,6,1,1,r,:,:,1,:])
-    materials_long_lt = np.einsum('pet->e', e01_long_lt[1,1,6,1,1,r,:,:,1,:])
-    baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,1,1,r,:,:,1,:])
+    materials_replacement = np.einsum('pet->e', e01_replacements[1,1,5,1,1,r,:,:,1,:])
+    materials_long_lt = np.einsum('pet->e', e01_long_lt[1,1,5,1,1,r,:,:,1,:])
+    baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,5,1,1,r,:,:,1,:])
     # Calculate relative difference to baseline
     sensitivity = np.zeros((Nz, NS, Na, NR, NV,Ne, Nh))
     for z in range(Nz):
