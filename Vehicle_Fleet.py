@@ -3421,7 +3421,7 @@ def sensitivity_analysis_complete():
     e = 7 # Ni
     for z in range(Nz):
         for S in range(NS):
-            for a in [0,1,2,4,6]:
+            for a in [0,1,2,4,5]:
                 for R in range(NR):
                     for V in range(NV):
                         for h in range(Nh):
@@ -4538,6 +4538,15 @@ def export_Li():
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_primary', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_recycled', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
 
+def export_mean_Al():
+    al_values = np.zeros((NS, Na, NV, Np, Nt))
+    for S in range(NS):
+        for a in range(Na):
+            for V in range(NV):
+                for p in range(Np):
+                    al_values[S,a,V,p,:] = (MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,0,V,r,p,2,0,:] + MaTrace_System.FlowDict['E_8_1'].Values[0,S,a,0,V,r,p,2,0,:])/np.einsum('gst->t',MaTrace_System.FlowDict['F_2_3'].Values[0,S,V,r,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/average_Al_content', al_values)
+            
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
     replacement_rate = 0.8
