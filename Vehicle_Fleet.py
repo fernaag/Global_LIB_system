@@ -537,7 +537,7 @@ inflows                             = np.zeros((Nz,NS, Na, NR, NV,Ng,Nb, Nt))
 inflows = np.einsum('zSaRVgbtc->zSaRVgbt',MaTrace_System.FlowDict['P_5_6'].Values[:,:,:,:,:,r,:,:,0,:,:])
 for z in range(Nz):
     for S in range(NS):
-        for a in range(7):
+        for a in range(Na):
             for R in range(NR):
                 for b in range(Nb):
                     for V in range(NV):
@@ -551,7 +551,7 @@ for z in range(Nz):
 
 #%%
 # Compute total stock
-for a in range(7):
+for a in range(Na):
     MaTrace_System.StockDict['P_6'].Values[:,:,a,:,:,r,:,0,:]         = np.einsum('zSRVgbtc->zSRVbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,a,:,:,r,:,:,0,:,:])
     MaTrace_System.FlowDict['P_7_8'].Values[:,:,a,:,:,r,:,:,0,:,:]                  = MaTrace_System.FlowDict['P_6_7'].Values[:,:,a,:,:,r,:,:,0,:,:]
     # Calculate battery parts going directly to recycling: Total outflows minus reuse
@@ -562,7 +562,7 @@ for a in range(7):
 ### Material layer
 for z in range(Nz):
     # for S in range(NS):
-        for a in range(7):
+        for a in range(Na):
             MaTrace_System.StockDict['E_3'].Values[z,:,a,:,r,:,:,:]           = np.einsum('SVgsbpt,gbpe->SVpet', MaTrace_System.StockDict['P_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:])
             MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:]          = np.einsum('SVgsbpc,gbpe->SVpec', MaTrace_System.FlowDict['P_1_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
             MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:]          = np.einsum('SVgsbpc,gbpe->SVpec', MaTrace_System.FlowDict['P_2_3'].Values[z,:,a,:,r,:,:,:,:,:], MaTrace_System.ParameterDict['Materials'].Values[:,:,:,:]) 
@@ -4535,7 +4535,8 @@ def export_P():
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_recycled', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
     
 def export_Li():
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,r,:,0,:,:])/1000)
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_primary', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_recycled', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
 
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
