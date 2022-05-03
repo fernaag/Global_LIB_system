@@ -3465,7 +3465,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[0,0].set_ylim([0,25])
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
 
     ## Plot Li
@@ -3516,7 +3516,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[0,1].set_ylim([0,6.5])
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Co
@@ -3568,7 +3568,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[1,0].set_ylim([0,5])
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot P
@@ -3620,7 +3620,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[1,1].set_title('d) Phosphorus', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[1,1].set_ylim([0,13])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
 
     ## Plot Al
@@ -3672,7 +3672,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[2,0].set_ylim([0,90])
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Graphite
@@ -3724,7 +3724,7 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[2,1].set_ylim([0,50])
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
     
     
@@ -3777,13 +3777,13 @@ def sensitivity_analysis_complete():
     top.set_visible(False)
     ax[3,0].set_title('g) Manganese', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[3,0].set_ylim([0,5.5])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
     
     
-    ## Plot Si
+    ## Plot Cu
     ax[3,1].set_prop_cycle(custom_cycler)
-    e = 3 # Si
+    e = 8 # Cu
     for z in range(Nz):
         for S in range(NS):
             for a in [0,1,2,4,6]:
@@ -3823,7 +3823,7 @@ def sensitivity_analysis_complete():
                                         resource[e,65::]/1000000,  linewidth=3, label='Scenario 3')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 4')
-    ax[3,1].set_ylabel('Primary Si demand [Mt]',fontsize =18)
+    ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
     top = ax[3,1].spines["top"]
@@ -3840,9 +3840,9 @@ def sensitivity_analysis_complete():
     scen_lines = [Line2D([0], [0], color='powderblue', lw=1),
                 Line2D([0], [0], color='dodgerblue', lw=1),
                 Line2D([0], [0], color='blueviolet', lw=1)]
-    ax[3,1].set_title('h) Silicon', fontsize=20)
+    ax[3,1].set_title('h) Copper', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
-    #ax.set_ylim([0,5])
+    ax[3,1].set_ylim([0,32.5])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
@@ -4520,7 +4520,7 @@ def sensitivity_table():
     table['Replacements'] = sensitivity_replacements
     table['Longer LIB lifetime'] = sensitivity_long_lt
     cm = sns.diverging_palette(240, 10, n=10, as_cmap=True)
-    table = table.style.background_gradient(cmap=cm, axis=None, vmax=1, vmin=-0.6)          
+    table = table.style.background_gradient(cmap=cm, axis=None, vmax=1, vmin=-1)          
 
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     writer = pd.ExcelWriter(os.path.join(os.getcwd(), 'results/sensitivity_table.xlsx'), engine='xlsxwriter')
