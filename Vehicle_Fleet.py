@@ -2366,8 +2366,8 @@ def sensitivity_over_time():
     ax[0,0].set_prop_cycle(custom_cycler)
     a = 1 # High LFP
     for e in range(Ne-1): # Don't include "other materials"
-        ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)-baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[0,0].set_title('a) Shift to LFP', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2380,8 +2380,8 @@ def sensitivity_over_time():
     ax[0,1].set_prop_cycle(custom_cycler)
     a = 0 # NCX
     for e in range(Ne-1): # Don't include "other materials"
-        ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)-baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[0,1].set_title('b) Shift to high Ni', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2394,8 +2394,8 @@ def sensitivity_over_time():
     ax[1,0].set_prop_cycle(custom_cycler)
     a = 2 # Next gen
     for e in range(Ne-1): # Don't include "other materials"
-        ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)-baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[1,0].set_title('c) Shift to next gen.', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2409,8 +2409,8 @@ def sensitivity_over_time():
     a = 5 # Base
     z = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)-baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)-baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[1,1].set_title('d) Smaller fleet', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2424,8 +2424,8 @@ def sensitivity_over_time():
     z = 1 # Base
     h = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[2,0].set_title('e) Efficient recycling', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2439,8 +2439,8 @@ def sensitivity_over_time():
     h = 1 # Base
     S = 2
     for e in range(Ne-1): # Don't include "other materials"
-        ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[2,1].set_title('f) Faster electrification', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
@@ -2454,8 +2454,8 @@ def sensitivity_over_time():
     S = 1 # Base
     V = 0
     for e in range(Ne-1): # Don't include "other materials"
-        ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2)
+        ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
     ax[3,0].set_title('g) Smaller batteries', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
@@ -2468,8 +2468,8 @@ def sensitivity_over_time():
     ax[3,1].set_prop_cycle(custom_cycler)
     V = 1 # Base
     for e in range(Ne-1): # Don't include "other materials"
-        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
-                (e01_replacements[1,1,5,0,1,r,:,e,1,70::].sum(axis=0)- baseline[e,70::])/baseline[e,70::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+        ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
+                (e01_replacements[1,1,5,0,1,r,:,e,1,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
     ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -3453,11 +3453,11 @@ def sensitivity_analysis_complete():
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
@@ -3504,11 +3504,11 @@ def sensitivity_analysis_complete():
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    scen_5[e,65::]/1000000,  linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    scen_5[e,65::]/1000000,  linewidth=3)
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
@@ -3556,11 +3556,11 @@ def sensitivity_analysis_complete():
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
@@ -3608,11 +3608,11 @@ def sensitivity_analysis_complete():
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3)
+                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
+                                        sustainable[e,65::]/1000000,  linewidth=3)
     ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side = ax[1,1].spines["right"]
     right_side.set_visible(False)
@@ -3660,11 +3660,11 @@ def sensitivity_analysis_complete():
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
@@ -3712,11 +3712,11 @@ def sensitivity_analysis_complete():
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
@@ -3765,11 +3765,11 @@ def sensitivity_analysis_complete():
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         bau[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        scen_5[e,65::]/1000000,  linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         sustainable[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         resource[e,65::]/1000000,  linewidth=3)
-    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3)
     ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
     right_side = ax[3,0].spines["right"]
     right_side.set_visible(False)
@@ -3814,15 +3814,15 @@ def sensitivity_analysis_complete():
     
     ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        slow[e,65::]/1000000, linewidth=3, label='Scenario 5')
+                                        slow[e,65::]/1000000, linewidth=3, label='Slow transition - supply bottlenecks')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        bau[e,65::]/1000000,  linewidth=3, label='Scenario 1 - Baseline')
+                                        bau[e,65::]/1000000,  linewidth=3, label='Baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        sustainable[e,65::]/1000000,  linewidth=3, label='Scenario 2')
+                                        scen_5[e,65::]/1000000,  linewidth=3, label='Base transition - NCM intensive')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        resource[e,65::]/1000000,  linewidth=3, label='Scenario 3')
+                                        sustainable[e,65::]/1000000,  linewidth=3, label='Fast transition - systemic solutions')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        scen_5[e,65::]/1000000,  linewidth=3, label='Scenario 4')
+                                        resource[e,65::]/1000000,  linewidth=3, label='Fast transition - focus on electrification')
     ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
@@ -3846,7 +3846,7 @@ def sensitivity_analysis_complete():
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, 0), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
+    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
     #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
     # Add title
     fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
@@ -4519,7 +4519,7 @@ def sensitivity_table():
     table = pd.concat([shift_to_lfp, shift_to_NCX, shift_to_next_gen, fleet_reduction, eff_recycling, faster_ev, smaller_ev], axis=1)
     table['Replacements'] = sensitivity_replacements
     table['Longer LIB lifetime'] = sensitivity_long_lt
-    cm = sns.diverging_palette(240, 10, n=10, as_cmap=True)
+    cm = sns.diverging_palette(133, 10, n=10, as_cmap=True) # 240 for blue and 133 for green
     table = table.style.background_gradient(cmap=cm, axis=None, vmax=1, vmin=-1)          
 
     # Create a Pandas Excel writer using XlsxWriter as the engine.
