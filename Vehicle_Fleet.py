@@ -2346,8 +2346,9 @@ def strategies_comparative():
     fig.legend(loc='lower left', prop={'size':20}, bbox_to_anchor =(0.2, 0.05), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
     fig.savefig(os.getcwd() + '/results/overview/resource_strategies', dpi=600, bbox_inches = 'tight')
 
-def sensitivity_over_time():
     from cycler import cycler
+
+def sensitivity_over_time():
     import seaborn as sns
     r=5
     custom_cycler = (cycler(color=sns.color_palette('Set1', 5)) *
@@ -2470,7 +2471,7 @@ def sensitivity_over_time():
     V = 1 # Base
     for e in range(Ne-1): # Don't include "other materials"
         ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
-                (e01_replacements[1,1,5,0,1,r,:,e,1,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
+                (e01_replacements[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)- baseline[e,72::])/baseline[e,72::]*100, linewidth=2, label=IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e])
     ax[3,1].set_title('h) Reuse and replacements', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
@@ -3459,6 +3460,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        2.51, 'k', marker="*", markersize=15) # Mine production of Ni, page 50 of report. In metal content
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
@@ -3467,7 +3470,7 @@ def sensitivity_analysis_complete():
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     ax[0,0].set_ylim([0,17.5])
-    ax[0,0].set_xlim([2020,2050])
+    ax[0,0].set_xlim([2019,2050])
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
 
     ## Plot Li
@@ -3511,6 +3514,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        0.085, 'k', marker="*", markersize=15) # Li minerals production, page 44, Li content world total
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
@@ -3519,7 +3524,7 @@ def sensitivity_analysis_complete():
     ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     ax[0,1].set_ylim([0,4.5])
-    ax[0,1].set_xlim([2020,2050])
+    ax[0,1].set_xlim([2019,2050])
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Co
@@ -3564,6 +3569,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        0.126, 'k', marker="*", markersize=15) # Co mine production, page 16, metal content world total
     ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
@@ -3572,7 +3579,7 @@ def sensitivity_analysis_complete():
     ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     ax[1,0].set_ylim([0,3])
-    ax[1,0].set_xlim([2020,2050])
+    ax[1,0].set_xlim([2019,2050])
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot P
@@ -3617,6 +3624,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        8, 'k', marker="*", markersize=15) # Phosphate rock * 43% , page 57
     ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side = ax[1,1].spines["right"]
     right_side.set_visible(False)
@@ -3625,7 +3634,7 @@ def sensitivity_analysis_complete():
     ax[1,1].set_title('d) Phosphorus', fontsize=20)
     ax[1,1].set_xlabel('Year',fontsize =16)
     ax[1,1].set_ylim([0,12])
-    ax[1,1].set_xlim([2020,2050])
+    ax[1,1].set_xlim([2019,2050])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
 
     ## Plot Al
@@ -3670,6 +3679,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        65.4, 'k', marker="*", markersize=15) # production of primary aluminium, page 4
     ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
@@ -3678,7 +3689,7 @@ def sensitivity_analysis_complete():
     ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     ax[2,0].set_ylim([0,70])
-    ax[2,0].set_xlim([2020,2050])
+    ax[2,0].set_xlim([2019,2050])
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Graphite
@@ -3723,6 +3734,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        1, 'k', marker="*", markersize=15) # Production of graphite, page 29
     ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
@@ -3731,7 +3744,7 @@ def sensitivity_analysis_complete():
     ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     ax[2,1].set_ylim([0,35])
-    ax[2,1].set_xlim([2020,2050])
+    ax[2,1].set_xlim([2019,2050])
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
     
     
@@ -3785,7 +3798,7 @@ def sensitivity_analysis_complete():
     ax[3,0].set_title('g) Manganese', fontsize=20)
     ax[3,0].set_xlabel('Year',fontsize =16)
     ax[3,0].set_ylim([0,2.5])
-    ax[3,0].set_xlim([2020,2050])
+    ax[3,0].set_xlim([2019,2050])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
     
     
@@ -3831,6 +3844,8 @@ def sensitivity_analysis_complete():
                                         EV4[e,65::]/1000000,  linewidth=3, label='EV4 - focus on electrification')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3, label='EV5 - systemic solutions')
+    ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        24.9, 'k', marker="*", markersize=15) # Refined production of copper, page 20
     ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
@@ -3843,19 +3858,20 @@ def sensitivity_analysis_complete():
                 Line2D([0], [0], color=sns.color_palette('cool', 5)[1], lw=3),
                 Line2D([0], [0], color=sns.color_palette('cool', 5)[2], lw=3),
                 Line2D([0], [0], color=sns.color_palette('cool', 5)[3], lw=3),
-                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3)
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3),
+                Line2D([0],[0] , marker='*', markersize=15, color='k', linewidth=0)
                 ]
     scen_lines = [Line2D([0], [0], color='powderblue', lw=1),
                 Line2D([0], [0], color='dodgerblue', lw=1),
                 Line2D([0], [0], color='blueviolet', lw=1)]
     ax[3,1].set_title('h) Copper', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
-    ax[3,1].set_ylim([0,22.5])
-    ax[3,1].set_xlim([2020,2050])
+    ax[3,1].set_ylim([0,26])
+    ax[3,1].set_xlim([2019,2050])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
+    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels+['Current production*'], loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
     #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
     # Add title
     fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
@@ -4378,6 +4394,88 @@ def Ni_strategies_combined_wedge():
     #ax.set_ylim([0,5])
     ax.tick_params(axis='both', which='major', labelsize=18)
 
+def graphical_abstract():
+    from cycler import cycler
+    import seaborn as sns
+    from matplotlib.lines import Line2D
+    r=5
+    custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # Define storylines
+    EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
+    EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
+    EV3 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
+    EV4 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
+    EV5 = e01_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
+
+    fig, ax = plt.subplots(figsize=(12,12))
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for R in range(NR):
+                    for V in range(NV):
+                        for h in range(Nh):
+                            if S==0:
+                                # Values from case 3
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                            np.einsum('pet->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'powderblue', alpha=0.01)
+                                # Values from case 6
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pet->t', e01_replacements[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'powderblue', alpha=0.02)
+                            if S==1:
+                                # Values from case 3
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                            np.einsum('pet->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'dodgerblue', alpha=0.01)
+                                # Values from case 6
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pet->t', e01_replacements[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'dodgerblue', alpha=0.02)
+                            if S==2:
+                                # Values from case 3
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                            np.einsum('pet->t', MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'blueviolet', alpha=0.01)
+                                # Values from case 6
+                                ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pet->t', e01_replacements[z,S,a,R,V,r,:,:-1,h,65::])/1000000, 'blueviolet', alpha=0.02)
+    scen_cycler = cycler(color=sns.color_palette('cool', 5))
+    ax.set_prop_cycle(scen_cycler)
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV1[:-1,65::].sum(axis=0)/1000000, linewidth=3, label='EV-MRP1')
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[:-1,65::].sum(axis=0)/1000000,  linewidth=3, label='EV-MRP2')
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV2[:-1,65::].sum(axis=0)/1000000,  linewidth=3, label='EV-MRP3')
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV4[:-1,65::].sum(axis=0)/1000000,  linewidth=3, label='EV-MRP4')
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV5[:-1,65::].sum(axis=0)/1000000,  linewidth=3, label='EV-MRP5')
+    ax.set_ylabel('Total primary material demand [Mt]',fontsize =18)
+    right_side = ax.spines["right"]
+    right_side.set_visible(False)
+    top = ax.spines["top"]
+    top.set_visible(False)
+    ax.set_title('Range of scenarios and EV-MRPs', fontsize=24)
+    ax.set_xlabel('Year',fontsize =18)
+    ax.set_ylim([0,150])
+    ax.set_xlim([2019,2050])
+    ax.tick_params(axis='both', which='major', labelsize=18)
+    custom_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[2], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[3], lw=3),
+                Line2D([0], [0], color=sns.color_palette('cool', 5)[4], lw=3)
+                ]
+    scen_lines = [Line2D([0], [0], color='powderblue', lw=1),
+                Line2D([0], [0], color='dodgerblue', lw=1),
+                Line2D([0], [0], color='blueviolet', lw=1)]
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
+    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels, loc='upper left', prop={'size':20}, bbox_to_anchor =(0.13, 0.85), ncol = 2, columnspacing = 1, handletextpad = 1, handlelength = 1) #
+    fig.savefig(os.getcwd() + '/results/overview/graphical_abstract', dpi=600, bbox_inches='tight')
+
 def sensitivity_table():
     import seaborn as sns
     z, S, a, R, V, e, h = pd.core.reshape.util.cartesian_product(
@@ -4398,9 +4496,9 @@ def sensitivity_table():
     r=5
     ### Adding data to the dataframes
     materials = np.einsum('zSaRVpeht->zSaRVeh', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,:,:,:])
-    materials_replacement = np.einsum('pet->e', e01_replacements[1,1,5,1,1,r,:,:,1,:])
-    materials_long_lt = np.einsum('pet->e', e01_long_lt[1,1,5,1,1,r,:,:,1,:])
-    baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,5,1,1,r,:,:,1,:])
+    materials_replacement = np.einsum('pet->e', e01_replacements[1,1,3,0,1,r,:,:,2,:])
+    materials_long_lt = np.einsum('pet->e', e01_long_lt[1,1,3,0,1,r,:,:,2,:])
+    baseline = np.einsum('pet->e', MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:])
     # Calculate relative difference to baseline
     sensitivity = np.zeros((Nz, NS, Na, NR, NV,Ne, Nh))
     for z in range(Nz):
@@ -4448,9 +4546,9 @@ def sensitivity_table():
     shift_to_lfp = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'LFP')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     shift_to_lfp.reset_index(inplace=True, drop=True)
     shift_to_lfp.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     shift_to_lfp.set_index('Element', inplace=True)
@@ -4459,9 +4557,9 @@ def sensitivity_table():
     shift_to_NCX = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'NCX')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     shift_to_NCX.reset_index(inplace=True, drop=True)
     shift_to_NCX.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     shift_to_NCX.set_index('Element', inplace=True)
@@ -4469,10 +4567,10 @@ def sensitivity_table():
 
     shift_to_next_gen = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
-                                & (primary_materials.Chemistry_Scenario == 'Next_gen')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Chemistry_Scenario == 'Next_gen_BNEF')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     shift_to_next_gen.reset_index(inplace=True, drop=True)
     shift_to_next_gen.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     shift_to_next_gen.set_index('Element', inplace=True)
@@ -4482,9 +4580,9 @@ def sensitivity_table():
     fleet_reduction = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Low')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     fleet_reduction.reset_index(inplace=True, drop=True)
     fleet_reduction.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     fleet_reduction.set_index('Element', inplace=True)
@@ -4494,7 +4592,7 @@ def sensitivity_table():
     eff_recycling = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
                                 & (primary_materials.Recycling_Process == 'Direct')]
     eff_recycling.reset_index(inplace=True, drop=True)
@@ -4505,9 +4603,9 @@ def sensitivity_table():
     faster_ev = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'Net Zero')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Constant')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     faster_ev.reset_index(inplace=True, drop=True)
     faster_ev.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     faster_ev.set_index('Element', inplace=True)
@@ -4516,9 +4614,9 @@ def sensitivity_table():
     smaller_ev = primary_materials.loc[ (primary_materials.Stock_Scenarios == 'Medium')
                                 & (primary_materials.EV_Scenario == 'SD')
                                 & (primary_materials.Chemistry_Scenario == 'BNEF')
-                                & (primary_materials.Reuse_Scenario == 'Direct recycling')
+                                & (primary_materials.Reuse_Scenario == 'LFP reused')
                                 & (primary_materials.Size_Scenarios == 'Shift to small cars')
-                                & (primary_materials.Recycling_Process == 'Hydrometallurgy')]
+                                & (primary_materials.Recycling_Process == 'Pyrometallurgy')]
     smaller_ev.reset_index(inplace=True, drop=True)
     smaller_ev.drop(['Stock_Scenarios', 'EV_Scenario', 'Chemistry_Scenario', 'Reuse_Scenario', 'Size_Scenarios','Recycling_Process'], axis=1, inplace=True)
     smaller_ev.set_index('Element', inplace=True)
