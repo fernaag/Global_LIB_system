@@ -1939,6 +1939,8 @@ def chemistry_scenarios():
         ax.set_title('Chemistry shares {} scenario'.format(b), fontsize=16)
         ax.set_xlabel('Year',fontsize =16)
         ax.tick_params(axis='both', which='major', labelsize=15)
+        fig.savefig(os.getcwd() + f'/results/SI/chemistry_scenario_{b}.pdf', dpi=600, bbox_inches='tight')
+
         
 def strategies_comparative():
     from cycler import cycler
