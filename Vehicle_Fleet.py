@@ -4658,8 +4658,8 @@ def export_mean_Al():
        
 def export_Ni():
     results = os.path.join(os.getcwd(), 'results')
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_primary', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,1,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_recycled', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,1,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_primary', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_recycled', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
      
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
