@@ -1643,28 +1643,28 @@ def flows_alt():
     fig, ax = plt.subplots(1,3, figsize=(21,10))
     ax[0].set_prop_cycle(custom_cycler)
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,1,r,1,:,55:]/1000))
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,1,r,1,:,55:,:]/1000))
     
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,1,r,1,:,55:]/1000))
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,1,r,1,:,55:,:]/1000))
     
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,1,r,1,:,55:]/1000))
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,1,r,1,:,55:,:]/1000))
     
     fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
     ax[0].set_prop_cycle(fill_cycler)
-    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,r,1,:,55:,:]/1000), alpha=0.2)
-    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,r,1,:,55:,:]/1000), alpha=0.2)
-    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,2,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,2,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,0,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,0,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[0].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[0,1,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[0,1,1,r,1,:,55:,:]/1000), alpha=0.2)
     
     ax[0].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
     right_side = ax[0].spines["right"]
@@ -1674,35 +1674,35 @@ def flows_alt():
     ax[0].set_title('a) Low stock scenarios', fontsize=20)
     ax[0].set_xlabel('Year',fontsize =18)
     ax[0].tick_params(axis='both', which='major', labelsize=16)
-    ax[0].set_ylim([0,700])
+    ax[0].set_ylim([0,450])
     ax[0].set_xlim([2015,2050])
     ax[0].grid()
     
     custom_cycler = cycler(color=sns.color_palette('Paired', 20)) #'Set2', 'Paired', 'YlGnBu'
     ax[1].set_prop_cycle(custom_cycler)
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,1,r,1,:,55:]/1000))
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,1,r,1,:,55:,:]/1000))
     
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,1,r,1,:,55:]/1000))
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,1,r,1,:,55:,:]/1000))
     
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,r,1,:,55:]/1000))
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,1,r,1,:,55:]/1000))
     ax[1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,r,1,:,55:,:]/1000))
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,1,r,1,:,55:,:]/1000))
     
     fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
     ax[1].set_prop_cycle(fill_cycler)
-    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,r,1,:,55:,:]/1000), alpha=0.2)
-    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,r,1,:,55:,:]/1000), alpha=0.2)
-    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,2,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,2,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,0,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,0,1,r,1,:,55:,:]/1000), alpha=0.2)
+    ax[1].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[1,1,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[1,1,1,r,1,:,55:,:]/1000), alpha=0.2)
     
     ax[1].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
     right_side = ax[1].spines["right"]
@@ -1712,35 +1712,35 @@ def flows_alt():
     ax[1].set_title('b) Medium stock scenarios', fontsize=20)
     ax[1].set_xlabel('Year',fontsize =18)
     ax[1].tick_params(axis='both', which='major', labelsize=16)
-    ax[1].set_ylim([0,700])
+    ax[1].set_ylim([0,450])
     ax[1].set_xlim([2015,2050])
     ax[1].grid()
     
     custom_cycler = cycler(color=sns.color_palette('Paired', 20)) #'Set2', 'Paired', 'YlGnBu'    ax[2].set_prop_cycle(custom_cycler)
     ax[2].set_prop_cycle(custom_cycler)
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,r,1,:,55:]/1000), label='STEP inflows')
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,1,r,1,:,55:]/1000), label='STEP inflows')
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,r,1,:,55:,:]/1000), label='STEP outflows')
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,1,r,1,:,55:,:]/1000), label='STEP outflows')
     
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,r,1,:,55:]/1000), label='SD inflows')
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,1,r,1,:,55:]/1000), label='SD inflows')
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,r,1,:,55:,:]/1000), label='SD outflows')
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,1,r,1,:,55:,:]/1000), label='SD outflows')
     
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,r,1,:,55:]/1000), label='Net Zero inflows')
+                np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,1,r,1,:,55:]/1000), label='Net Zero inflows')
     ax[2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[55:], 
-                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,r,1,:,55:,:]/1000), label='Net Zero outflows')
+                np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,1,r,1,:,55:,:]/1000), label='Net Zero outflows')
     
     fill_cycler = cycler(color=sns.color_palette('Set1', 20)) #'Set2', 'Paired', 'YlGnBu'
     ax[2].set_prop_cycle(fill_cycler)
-    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,r,1,:,55:,:]/1000), label='Resource gap Net Zero', alpha=0.2)
-    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,r,1,:,55:,:]/1000), label='Resource gap SD', alpha=0.2)
-    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,r,1,:,55:]/1000),\
-        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,r,1,:,55:,:]/1000), label='Resource gap STEP', alpha=0.2)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,2,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,2,1,r,1,:,55:,:]/1000), label='Inflow-outflow gap Net Zero', alpha=0.2)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,0,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,0,1,r,1,:,55:,:]/1000), label='Inflow-outflow gap needs SD', alpha=0.2)
+    ax[2].fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[55:],np.einsum('st->t', MaTrace_System.FlowDict['F_2_3'].Values[2,1,1,r,1,:,55:]/1000),\
+        np.einsum('stc->t', MaTrace_System.FlowDict['F_3_4'].Values[2,1,1,r,1,:,55:,:]/1000), label='Inflow-outflow gap needs STEP', alpha=0.2)
     
     ax[2].set_ylabel('Nr. of Vehicles [million]',fontsize =18)
     right_side = ax[1].spines["right"]
@@ -1750,11 +1750,11 @@ def flows_alt():
     ax[2].set_title('c) High stock scenarios', fontsize=20)
     ax[2].set_xlabel('Year',fontsize =18)
     ax[2].tick_params(axis='both', which='major', labelsize=16)
-    ax[2].set_ylim([0,700])
+    ax[2].set_ylim([0,450])
     ax[2].set_xlim([2015,2050])
     ax[2].grid()
     fig.legend(loc='lower left', prop={'size':20}, bbox_to_anchor =(0.1, -0.1), ncol = 3, columnspacing = 1, handletextpad = 2, handlelength = 2)
-    fig.savefig(os.getcwd() + '/results/overview/system_flows_alt', dpi=300)
+    fig.savefig(os.getcwd() + '/results/overview/system_flows_alt', dpi=600, bbox_inches='tight')
 
 def slb_stock():
     ### SLB stock
@@ -1941,7 +1941,6 @@ def chemistry_scenarios():
         ax.tick_params(axis='both', which='major', labelsize=15)
         fig.savefig(os.getcwd() + f'/results/SI/chemistry_scenario_{b}.pdf', dpi=600, bbox_inches='tight')
 
-        
 def strategies_comparative():
     from cycler import cycler
     import seaborn as sns
