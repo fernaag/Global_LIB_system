@@ -4659,7 +4659,276 @@ def export_Ni():
     results = os.path.join(os.getcwd(), 'results')
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_primary', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_recycled', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
-     
+
+def export_primary_demand_df(): 
+    z,S,a,R,V,r,p,e,h,t = pd.core.reshape.util.cartesian_product(
+##z,S,a,R,V,r,p,e,h,t
+    [
+    IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Chemistry_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+    ['Global'],
+    IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Element")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Time")].Items
+    ]
+    )
+
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r, Battery_part=p, Material=e,Recycling_Process=h, Time=t)
+    )
+
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for v in range(NV):
+                        for p in range(Np):
+                            for e in range(Ne):
+                                for h in range(Nh):
+                                    for t in range(Nt):
+                                        value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,p,e,h,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                        values.append(value)
+
+    file['value'] = values
+        
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand.xlsx', engine='xlsxwriter')
+    # Write each dataframe to a different worksheet.
+    for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
+        for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
+            file[(file['Stock_scenario']==Z) & (file['EV_penetration_scenario']==S)].to_excel(writer, sheet_name=Z+'_'+S)
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+    
+def export_secondary_availability_df(): 
+    z,S,a,R,V,r,p,e,h,t = pd.core.reshape.util.cartesian_product(
+    ##z,S,a,R,V,r,p,e,h,t
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Chemistry_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+        ['Global'],
+        IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Element")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r, Battery_part=p, Material=e,Recycling_Process=h, Time=t)
+    )
+
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for R in range(NR):
+                    for v in range(NV):
+                        for p in range(Np):
+                            for e in range(Ne):
+                                for h in range(Nh):
+                                    for t in range(Nt):
+                                        value = MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,v,r,p,e,h,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                        values.append(value)
+
+    file['value'] = values
+        
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_availability.xlsx', engine='xlsxwriter')
+    # Write each dataframe to a different worksheet.
+    for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
+        for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
+            file[(file['Stock_scenario']==Z) & (file['EV_penetration_scenario']==S)].to_excel(writer, sheet_name=Z+'_'+S)
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+    
+def export_storylines(): 
+    e,t = pd.core.reshape.util.cartesian_product(
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Element")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict( Material=e, Time=t)
+    )
+    file2 = pd.DataFrame(
+        dict( Material=e, Time=t)
+    )
+    
+    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # Define storylines
+    EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
+    EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
+    EV3 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
+    EV4 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
+    EV5 = e01_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
+    # Also export recycled materials
+    EV1r = MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
+    EV2r = MaTrace_System.FlowDict['E_8_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
+    EV3r = MaTrace_System.FlowDict['E_8_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
+    EV4r = MaTrace_System.FlowDict['E_8_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
+    EV5r = e81_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV1[e,t]/1000
+            values.append(value)
+    
+    file['MRS1'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV2[e,t]/1000
+            values.append(value)
+    
+    file['MRS2'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV3[e,t]/1000
+            values.append(value)
+    
+    file['MRS3'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV4[e,t]/1000
+            values.append(value)
+    
+    file['MRS4'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV5[e,t]/1000
+            values.append(value)
+    
+    file['MRS5'] = values
+    
+    # Exporting secondary materials
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV1r[e,t]/1000
+            values.append(value)
+    
+    file2['MRS1'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV2r[e,t]/1000
+            values.append(value)
+    
+    file2['MRS2'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV3r[e,t]/1000
+            values.append(value)
+    
+    file2['MRS3'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV4r[e,t]/1000
+            values.append(value)
+    
+    file2['MRS4'] = values
+    
+    values = []
+    for e in range(Ne):
+        for t in range(Nt):
+            value = EV5r[e,t]/1000
+            values.append(value)
+    
+    file2['MRS5'] = values
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS.xlsx', engine='xlsxwriter')
+    # Write each dataframe to a different worksheet.
+    file.to_excel(writer, sheet_name='Primary_materials')
+    file2.to_excel(writer, sheet_name='Secondary_materials')
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+ 
+def export_battery_flows():
+    z,S,a,V,r,g,s,b,t = pd.core.reshape.util.cartesian_product(
+    #z,S,a,V,r,g,s,b,t
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Chemistry_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+        ['Global'],
+        ['BEV', 'PHEV', 'Other'],
+        IndexTable.Classification[IndexTable.index.get_loc("Size")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Battery_Chemistry")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Vehicle_size_scenario = V, Region=r, Drive_Train=g, Size=s,Battery_Chemistry=b, Time=t)
+    )
+    file2 = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Vehicle_size_scenario = V, Region=r, Drive_Train=g, Size=s,Battery_Chemistry=b, Time=t)
+    )
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for v in range(NV):
+                    for g in range(1,Ng):
+                        for s in range(Ns):
+                            for b in range(Nb):
+                                for t in range(Nt):
+                                    value = MaTrace_System.FlowDict['M_2_3'].Values[z,S,a,v,r,g,s,b,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                    values.append(value)
+
+    file['value'] = values
+    file['unit'] = 'million'
+    
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in range(Na):
+                for v in range(NV):
+                    for g in range(1,Ng):
+                        for s in range(Ns):
+                            for b in range(Nb):
+                                for t in range(Nt):
+                                    value = MaTrace_System.FlowDict['M_3_4'].Values[z,S,a,v,r,g,s,b,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                    values.append(value)
+
+    file2['value'] = values
+    file2['unit'] = 'million'
+    
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows.xlsx', engine='xlsxwriter')
+    # Write each dataframe to a different worksheet.
+    for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
+        for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
+            file[(file['Stock_scenario']==Z) & (file['EV_penetration_scenario']==S)].to_excel(writer, sheet_name=Z+'_stock_'+S+'inflows')
+            file2[(file2['Stock_scenario']==Z) & (file2['EV_penetration_scenario']==S)].to_excel(writer, sheet_name=Z+'_stock_'+S+'outflows')
+    # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+ 
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
     replacement_rate = 0.8
