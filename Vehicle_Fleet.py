@@ -2483,7 +2483,7 @@ def sensitivity_over_time():
     top.set_visible(False)
     
     fig.legend(loc='lower left', prop={'size':25}, bbox_to_anchor =(0.25, 0.03), ncol = 5, columnspacing = 1, handletextpad = 0.5, handlelength = 2)
-    fig.suptitle('Sensitivity to change in parameter over time', fontsize=30)
+    fig.suptitle('Sensitivity of primary material demand to change in parameter over time', fontsize=30)
     fig.subplots_adjust(top=0.92)
     fig.savefig(os.getcwd() + '/results/overview/sensitivity_over_time', dpi=600, bbox_inches='tight')
     
@@ -3414,8 +3414,8 @@ def sensitivity_analysis_complete():
     e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
-    EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
-    EV3 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
+    EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
+    EV3 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
     EV4 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
     EV5 = e01_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
 
@@ -3454,9 +3454,9 @@ def sensitivity_analysis_complete():
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3508,9 +3508,9 @@ def sensitivity_analysis_complete():
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                    EV3[e,65::]/1000000,  linewidth=3)
-    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                    EV3[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3563,9 +3563,9 @@ def sensitivity_analysis_complete():
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3586,6 +3586,28 @@ def sensitivity_analysis_complete():
     ## Plot P
     ax[1,1].set_prop_cycle(custom_cycler)
     e = 4 # P
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    divider = make_axes_locatable(ax[1,1])
+    ax2 = divider.new_vertical(size="15%", pad=0.1)
+    fig.add_axes(ax2)
+    ax2.set_ylim(29, 31.5)
+    ax[1,1].set_ylim([0,13])
+    ax2.tick_params(bottom=False, labelbottom=False)
+    ax2.spines['top'].set_visible(False)
+    ax2.spines['bottom'].set_visible(False)
+    # From https://matplotlib.org/examples/pylab_examples/broken_axis.html
+    d = .02  # how big to make the diagonal lines in axes coordinates
+    # arguments to pass to plot, just so we don't keep repeating them
+    kwargs = dict(transform=ax2.transAxes, color='k', clip_on=False)
+    ax2.plot((-d, +d), (-d, 10*d), **kwargs)        # top-left diagonal
+    #ax2.plot((1 - d, 1 + d), (-d, 10*d), **kwargs)  # top-right diagonal
+
+    kwargs.update(transform=ax[1,1].transAxes)  # switch to the bottom axes
+    ax2.plot((-d, +d), (1 - d, 1 + d), **kwargs)  # bottom-left diagonal
+    #ax2.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)  # bottom-right diagonal
+    ax2.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        30.72, 'k', marker="*", markersize=15) # Phosphate rock production
+
     for z in range(Nz):
         for S in range(NS):
             for a in [0,1,3,4,7]:
@@ -3618,26 +3640,27 @@ def sensitivity_analysis_complete():
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
-    ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
-                                        8, 'k', marker="*", markersize=15) # Phosphate rock * 43% , page 57
-    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side = ax[1,1].spines["right"]
+    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
-    ax[1,1].set_title('d) Phosphorus', fontsize=20)
+    right_side2 = ax2.spines["right"]
+    right_side2.set_visible(False)
+    ax2.set_xlim([2019,2050])
+    ax2.set_title('d) Phosphorus', fontsize=20)
+    ax2.tick_params(axis='both', which='major', labelsize=18)
     ax[1,1].set_xlabel('Year',fontsize =16)
-    ax[1,1].set_ylim([0,12])
     ax[1,1].set_xlim([2019,2050])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
-
+    
     ## Plot Al
     ax[2,0].set_prop_cycle(custom_cycler)
     e = 2 # Al
@@ -3673,9 +3696,9 @@ def sensitivity_analysis_complete():
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3728,9 +3751,9 @@ def sensitivity_analysis_complete():
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3752,6 +3775,27 @@ def sensitivity_analysis_complete():
     ## Plot Mn
     ax[3,0].set_prop_cycle(custom_cycler)
     e = 5 # Mn
+    divider = make_axes_locatable(ax[3,0])
+    ax3 = divider.new_vertical(size="15%", pad=0.1)
+    fig.add_axes(ax3)
+    ax3.set_ylim(19, 21)
+    ax[3,0].set_ylim([0,2.75])
+    ax3.tick_params(bottom=False, labelbottom=False)
+    ax3.spines['top'].set_visible(False)
+    ax3.spines['bottom'].set_visible(False)
+    # From https://matplotlib.org/examples/pylab_examples/broken_axis.html
+    d = .02  # how big to make the diagonal lines in axes coordinates
+    # arguments to pass to plot, just so we don't keep repeating them
+    kwargs = dict(transform=ax3.transAxes, color='k', clip_on=False)
+    ax3.plot((-d, +d), (-d, 10*d), **kwargs)        # top-left diagonal
+    #ax3.plot((1 - d, 1 + d), (-d, 10*d), **kwargs)  # top-right diagonal
+
+    kwargs.update(transform=ax[3,0].transAxes)  # switch to the bottom axes
+    ax3.plot((-d, +d), (1 - d, 1 + d), **kwargs)  # bottom-left diagonal
+    #ax3.plot((1 - d, 1 + d), (1 - d, 1 + d), **kwargs)  # bottom-right diagonal
+    ax3.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
+                                        20, 'k', marker="*", markersize=15) # Phosphate rock production
+
     for z in range(Nz):
         for S in range(NS):
             for a in [0,1,3,4,7]:
@@ -3784,9 +3828,9 @@ def sensitivity_analysis_complete():
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3)
-    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV2[e,65::]/1000000,  linewidth=3)
+    ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        EV3[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3796,9 +3840,12 @@ def sensitivity_analysis_complete():
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
     top.set_visible(False)
-    ax[3,0].set_title('g) Manganese', fontsize=20)
+    right_side2 = ax3.spines["right"]
+    right_side2.set_visible(False)
+    ax3.set_xlim([2019,2050])
+    ax3.set_title('g) Manganese', fontsize=20)
+    ax3.tick_params(axis='both', which='major', labelsize=18)
     ax[3,0].set_xlabel('Year',fontsize =16)
-    ax[3,0].set_ylim([0,2.5])
     ax[3,0].set_xlim([2019,2050])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
     
@@ -3836,15 +3883,15 @@ def sensitivity_analysis_complete():
     
     ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV1[e,65::]/1000000, linewidth=3, label='EV1 - supply bottlenecks')
+                                        EV1[e,65::]/1000000, linewidth=3, label='MRP1, Slow transition')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV3[e,65::]/1000000,  linewidth=3, label='EV3 - NCM intensive')
+                                        EV2[e,65::]/1000000,  linewidth=3, label='MRP2, Slow transition - technology oriented')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV2[e,65::]/1000000,  linewidth=3, label='EV2 - Baseline')
+                                        EV3[e,65::]/1000000,  linewidth=3, label='MRP3, Moderate transition - baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV4[e,65::]/1000000,  linewidth=3, label='EV4 - focus on electrification')
+                                        EV4[e,65::]/1000000,  linewidth=3, label='MRP4, fast transition - focus on electrification')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV5[e,65::]/1000000,  linewidth=3, label='EV5 - systemic solutions')
+                                        EV5[e,65::]/1000000,  linewidth=3, label='MRP5, fast transition - systemic solutions')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         24.9, 'k', marker="*", markersize=15) # Refined production of copper, page 20
     ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
@@ -3872,7 +3919,7 @@ def sensitivity_analysis_complete():
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    fig.legend(custom_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios']+labels+['Current production*'], loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
+    fig.legend(custom_lines, ['Low EV penetration', 'Medium EV penetration', 'Fast EV penetration']+labels+['Current production*'], loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
     #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
     # Add title
     fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
