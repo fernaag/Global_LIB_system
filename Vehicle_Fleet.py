@@ -2399,7 +2399,7 @@ def sensitivity_over_time():
     for e in range(Ne-1): # Don't include "other materials"
         ax[0,2].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[72::], 
                 (MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,e,h,72::].sum(axis=0)-baseline[e,72::])/baseline[e,72::]*100, linewidth=2)
-    ax[0,2].set_title('c) Shift to next gen.', fontsize=20)
+    ax[0,2].set_title('c) Shift to Li-air and Li-S', fontsize=20)
     ax[0,2].set_xlabel('Year',fontsize =16)
     ax[0,2].tick_params(axis='both', which='major', labelsize=18)
     ax[0,2].set_ylabel('Change [%]',fontsize =18)
@@ -2422,6 +2422,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
     top.set_visible(False)
+    ax[1,0].set_ylim([-40,0])
     
     ax[1,1].set_prop_cycle(custom_cycler)
     z = 1 # Base
@@ -2452,6 +2453,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[1,2].spines["top"]
     top.set_visible(False)
+    ax[1,2].set_ylim([0,145])
     
     ax[2,0].set_prop_cycle(custom_cycler)
     S = 1 # Base
@@ -2481,6 +2483,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
     top.set_visible(False)
+    ax[2,1].set_ylim([-23,0])
     
     ax[2,2].set_prop_cycle(custom_cycler)
     V = 1 # Base
@@ -2495,6 +2498,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[2,2].spines["top"]
     top.set_visible(False)
+    ax[2,2].set_ylim([-17,0])
     
     fig.legend(loc='lower left', prop={'size':25}, bbox_to_anchor =(0.25, 0.03), ncol = 5, columnspacing = 1, handletextpad = 0.5, handlelength = 2)
     fig.suptitle('Change in material demand for a given intervention', fontsize=30)
@@ -2974,8 +2978,7 @@ def sensitivity_analysis():
     fig.savefig(os.getcwd() + '/results/overview/sensitivity_analysis', dpi=300)
 
 def sensitivity_analysis_newcolor():
-    def sensitivity_analysis_complete():
-        from cycler import cycler
+    from cycler import cycler
     import seaborn as sns
     from matplotlib.lines import Line2D
     r=5
@@ -2989,7 +2992,7 @@ def sensitivity_analysis_newcolor():
     EV4 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
     EV5 = e01_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
 
-    fig, ax = plt.subplots(4,2,figsize=(22,28))
+    fig, ax = plt.subplots(4,2,figsize=(26,28))
     # Define sensitivity analysis for Ni
     e = 7 # Ni
     for z in range(Nz):
@@ -3459,9 +3462,9 @@ def sensitivity_analysis_newcolor():
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV3[e,65::]/1000000,  linewidth=3, label='MRS3, Moderate transition - baseline')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV4[e,65::]/1000000,  linewidth=3, label='MRS4, fast transition - focus on electrification')
+                                        EV4[e,65::]/1000000,  linewidth=3, label='MRS4, Fast transition - focus on electrification')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV5[e,65::]/1000000,  linewidth=3, label='MRS5, fast transition - systemic solutions')
+                                        EV5[e,65::]/1000000,  linewidth=3, label='MRS5, Fast transition - systemic solutions')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         24.9, 'k', marker="*", markersize=15) # Refined production of copper, page 20
     ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
@@ -3470,19 +3473,21 @@ def sensitivity_analysis_newcolor():
     top = ax[3,1].spines["top"]
     top.set_visible(False)
     # sns.color_palette('tab20c')[8], sns.color_palette('tab20c')[9],sns.color_palette('tab20c')[4], sns.color_palette('tab20c')[0], sns.color_palette('tab20c')[1]
-    custom_lines = [Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[1], lw=3),
-                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[2], lw=3),
+    custom_lines = [Line2D([0], [0], color='w', lw=3),
                 Line2D([0], [0], color=sns.color_palette('tab20c')[8], lw=3),
                 Line2D([0], [0], color=sns.color_palette('tab20c')[9], lw=3),
                 Line2D([0], [0], color=sns.color_palette('tab20c')[4], lw=3),
                 Line2D([0], [0], color=sns.color_palette('tab20c')[0], lw=3),
-                Line2D([0], [0], color=sns.color_palette('tab20c')[1], lw=3),
-                Line2D([0],[0] , marker='*', markersize=15, color='k', linewidth=0)
-                ]
-    scen_lines = [Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[0], lw=1),
-                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[1], lw=1),
-                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[2], lw=1)]
+                Line2D([0], [0], color=sns.color_palette('tab20c')[1], lw=3)]
+                
+    scen_lines = [Line2D([0], [0], color='w', lw=3),
+                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[0], lw=3),
+                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[1], lw=3),
+                Line2D([0], [0], color=sns.color_palette('Pastel2', 5)[2], lw=3)]
+    
+    prod_line = [
+                Line2D([0],[0] , marker='*', markersize=15, color='k', linewidth=0)]
+    
     ax[3,1].set_title('h) Copper', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].set_ylim([0,26])
@@ -3490,8 +3495,9 @@ def sensitivity_analysis_newcolor():
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    fig.legend(custom_lines, ['Low EV penetration', 'Medium EV penetration', 'Fast EV penetration']+labels+['Current production*'], loc='lower left', prop={'size':20}, bbox_to_anchor =(0.05, 0), ncol = 3, columnspacing = 1, handletextpad = 1, handlelength = 1)
-    #fig.legend(scen_lines, ['Slow EV penetration scenarios', 'Medium EV penetration scenarios', 'Fast EV penetration scenarios'], loc='upper left',prop={'size':20}, bbox_to_anchor =(1, 0.7), fontsize=20)
+    fig.legend(custom_lines, ['Scenarios']+labels, loc='upper left', prop={'size':20}, bbox_to_anchor =(0.1, 0.05), ncol = 1, columnspacing = 1, handletextpad = 1, handlelength = 1)
+    fig.legend(scen_lines, ['EV penetration']+['Slow', 'Moderate', 'Fast'], loc='upper left', prop={'size':20}, bbox_to_anchor =(0.45, 0.05), ncol = 1, columnspacing = 1, handletextpad = 1, handlelength = 1)
+    fig.legend(prod_line, ['Current production*'], loc='upper left',prop={'size':20}, bbox_to_anchor =(0.45, -0.02), ncol = 1, columnspacing = 1, handletextpad = 1, handlelength = 1)
     # Add title
     fig.suptitle('Resource use per technology used to meet storage demand', fontsize=30)
     fig.subplots_adjust(top=0.92, bottom=0.08)
