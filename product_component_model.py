@@ -20,7 +20,6 @@ https://github.com/fernaag/product_component_model
 
 """
 
-
 import numpy as np
 import scipy.stats
 
