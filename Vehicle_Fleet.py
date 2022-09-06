@@ -380,7 +380,7 @@ MaTrace_System.StockDict['P_C_6']   = msc.Stock(Name = 'Stock of batteries in st
 MaTrace_System.StockDict['C_3']   = msc.Stock(Name = 'xEV in-use stock', P_Res = 3, Type = 0,
                                               Indices = 'z,S,a,V,r,g,t', Values=None)
 MaTrace_System.StockDict['C_6']   = msc.Stock(Name = 'xEV in-use stock', P_Res = 6, Type = 0,
-                                              Indices = 'z,S,a,R,V,r,t', Values=None)
+                                              Indices = 'z,S,a,R,V,r,b,t', Values=None)
 
 ## Flows to be used for materials
 MaTrace_System.FlowDict['E_1_2'] = msc.Flow(Name = 'Materials sold to vehicle manufacturer by part', P_Start = 1, P_End = 2,
@@ -596,7 +596,7 @@ e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/D
 # scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
 
 
-#%% 
+8114#%% 
 def results_Sofia():
     # Exporting results for Sofia
     # Baseline values for the stock
@@ -5342,15 +5342,15 @@ def export_primary_demand_df():
     IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
     IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
     ['Global'],
-    IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
+    #IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
     IndexTable.Classification[IndexTable.index.get_loc("Element")].Items[:-1],
     IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
-    IndexTable.Classification[IndexTable.index.get_loc("Time")].Items
+    IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
     ]
     )
 
     file = pd.DataFrame(
-        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r, Battery_part=p, Material=e,Recycling_Process=h, Time=t)
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Time=t)
     )
 
     values = []
@@ -5363,8 +5363,8 @@ def export_primary_demand_df():
                         for p in range(Np):
                             for e in range(Ne-1):
                                 for h in range(Nh):
-                                    for t in range(Nt):
-                                        value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,p,e,h,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                    for t in range(60,Nt):
+                                        value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
                                         values.append(value)
 
     file['value'] = values
@@ -5375,6 +5375,87 @@ def export_primary_demand_df():
         for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
             file[(file['Stock_scenario']==Z) & (file['EV_penetration_scenario']==S)].to_excel(writer, sheet_name=Z+'_'+S)
     # Close the Pandas Excel writer and output the Excel file.
+    writer.save()
+   
+def export_primary_demand_df_new(): 
+    z,S,a,R,V,r,e,h,t = pd.core.reshape.util.cartesian_product(
+##z,S,a,R,V,r,p,e,h,t
+    [
+    IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+    ['NCX', 'LFP', 'Next_Gen_LFP', 'BNEF', 'Next_Gen_BNEF'],
+    IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+    ['Global'],
+    #IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Element")].Items[:-1],
+    IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
+    ]
+    )
+
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Time=t)
+    )
+
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for R in range(NR):
+                    for v in range(NV):
+                        for e in range(Ne-1):
+                            for h in range(Nh):
+                                for t in range(60,Nt):
+                                    value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                    values.append(value)
+
+    file['value'] = values
+        
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
+    file.to_excel(writer)
+    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
+    writer.save()
+    
+def export_secondary_availability_df_new(): 
+    z,S,a,R,V,r,e,h,t = pd.core.reshape.util.cartesian_product(
+    [
+    IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+    ['NCX', 'LFP', 'Next_Gen_LFP', 'BNEF', 'Next_Gen_BNEF'],
+    IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+    ['Global'],
+    #IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Element")].Items[:-1],
+    IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+    IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Time=t)
+    )
+
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for R in range(NR):
+                    for v in range(NV):
+                        for e in range(Ne-1):
+                            for h in range(Nh):
+                                for t in range(60,Nt):
+                                    value = MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                    values.append(value)
+
+    file['value'] = values
+        
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new.xlsx', engine='xlsxwriter')
+    file.to_excel(writer)
+    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new')
     writer.save()
     
 def export_secondary_availability_df(): 
@@ -5601,6 +5682,142 @@ def export_battery_flows():
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
  
+def export_battery_flows_new():
+    z,S,a,V,g,b,t = pd.core.reshape.util.cartesian_product(
+    #z,S,a,V,r,g,s,b,t
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        ['NCX', 'LFP', 'Next_Gen_LFP', 'BNEF', 'Next_Gen_BNEF'],
+        IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+        ['BEV', 'OTHER', 'PHEV'],
+        IndexTable.Classification[IndexTable.index.get_loc("Battery_Chemistry")].Items[1:-4],
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Vehicle_size_scenario = V, Drive_Train=g, Battery_Chemistry=b, Time=t)
+    )
+    file2 = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Vehicle_size_scenario = V,  Drive_Train=g, Battery_Chemistry=b, Time=t)
+    )
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for v in range(NV):
+                    for g in range(1,Ng):
+                        for b in [1,2,3,4,5,6,7,8,9,10,11,12]:
+                            for t in range(60,Nt):
+                                value = MaTrace_System.FlowDict['M_2_3'].Values[z,S,a,v,r,g,:,b,t].sum()/1000 #z,S,a,R,V,r,p,e,h,t
+                                values.append(value)
+
+    file['value'] = values
+    file['unit'] = 'million'
+    
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for v in range(NV):
+                    for g in range(1,Ng):
+                        for b in [1,2,3,4,5,6,7,8,9,10,11,12]:
+                            for t in range(60,Nt):
+                                value = MaTrace_System.FlowDict['M_3_4'].Values[z,S,a,v,r,g,:,b,t].sum()/1000 #z,S,a,R,V,r,p,e,h,t
+                                values.append(value)
+
+    file2['value'] = values
+    file2['unit'] = 'million'
+    
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new.xlsx', engine='xlsxwriter')
+    file.to_excel(writer)
+    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new')
+    file2.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/outflows')
+
+    
+    writer.save()
+
+def export_slb_stock():
+    # Calculate capacity
+    # z,S,a,R,V,r,t
+    r=5
+    MaTrace_System.StockDict['C_6'].Values[:,:,:,:,:,r,:,:] = np.einsum('zSaRVgbtc,btc->zSaRVbt',MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,:,r,:,:,0,:,:], MaTrace_System.ParameterDict['Degradation'].Values[:,:,:])
+    z,S,a,R,V,b,t = pd.core.reshape.util.cartesian_product(
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        ['NCX', 'LFP', 'Next_Gen_LFP', 'BNEF', 'Next_Gen_BNEF'],
+        IndexTable.Classification[IndexTable.index.get_loc("Reuse_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Battery_Chemistry")].Items[1:-4],
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario = R, Vehicle_size_scenario = V, Battery_Chemistry=b, Time=t)
+    )
+    values = []
+    r=5
+    for z in range(Nz):
+        for S in range(NS):
+            for a in [0,1,3,4,7]:
+                for R in range(NR):
+                    for v in range(NV):
+                        for b in [1,2,3,4,5,6,7,8,9,10,11,12]:
+                            for t in range(60,Nt):
+                                value = MaTrace_System.StockDict['C_6'].Values[z,S,a,R,v,r,b,t]/1000 #z,S,a,R,V,r,p,e,h,t
+                                values.append(value)
+
+    file['value'] = values
+    file['unit'] = 'MWh'
+    
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity.xlsx', engine='xlsxwriter')
+    file.to_excel(writer)
+    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity')
+    
+    writer.save()
+ 
+def export_stock():
+    r=5
+    z,S,V,g,s,t = pd.core.reshape.util.cartesian_product(
+    [
+        IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Size_Scenarios")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Good")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Size")].Items,
+        IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
+    ]
+    )
+    
+    file = pd.DataFrame(
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Vehicle_size_scenario = V, Drive_Train = g, Size = s,  Time=t)
+    )
+    values = []
+    r=5
+    # z,S,V,r,g,s,t
+    for z in range(Nz):
+        for S in range(NS):
+            for v in range(NV):
+                for g in range(Ng):
+                    for s in range(Ns):
+                        for t in range(60,Nt):
+                                value = MaTrace_System.StockDict['S_3'].Values[z,S,v,r,g,s,t].sum()/1000 #z,S,a,R,V,r,p,e,h,t
+                                values.append(value)
+
+    file['value'] = values
+    file['unit'] = 'Million'
+    
+    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock.xlsx', engine='xlsxwriter')
+    file.to_excel(writer)
+    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock')
+    
+    writer.save()
+ 
 def export_sensitivity_over_time():
     r=5
     baseline = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
@@ -5734,7 +5951,6 @@ def model_case_6():
 # Computing SLB stock after aggregating inflows
     Model_slb                                                       = pcm.ProductComponentModel(t = range(0,Nt),  lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
     # Compute the survival curve of the batteries with the additional lenght for the last tau years
-    #%%
     '''
     Define the SLB model in advance. We do not compute everything using the dsm as it only takes i as input
     and takes too long to compute. Instead, we define the functions ourselves using the sf computed with dsm. 
