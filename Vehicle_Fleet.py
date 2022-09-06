@@ -6149,7 +6149,3 @@ def model_long_lt():
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:,:])
-
-# %%
-
-# %%
