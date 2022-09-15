@@ -202,7 +202,7 @@ ParameterDict['Capacity']= msc.Parameter(Name = 'Capacity',
                                                              Unit = '%')
 
 
-ParameterDict['Degradation']= msc.Parameter(Name = 'Degradation',
+ParameterDict['Degradation']= msc.Parameter(Name = 'Degradation', # Starts at 1 (suitable for vehicles but not SLBs)
                                                              ID = 3,
                                                              P_Res = None,
                                                              MetaData = None,
@@ -381,6 +381,10 @@ MaTrace_System.StockDict['C_3']   = msc.Stock(Name = 'xEV in-use stock', P_Res =
                                               Indices = 'z,S,a,V,r,g,t', Values=None)
 MaTrace_System.StockDict['C_6']   = msc.Stock(Name = 'xEV in-use stock', P_Res = 6, Type = 0,
                                               Indices = 'z,S,a,R,V,r,b,t', Values=None)
+MaTrace_System.FlowDict['C_2_3'] = msc.Flow(Name = 'Batteries in sold vehicles', P_Start = 2, P_End = 3,
+                                            Indices = 'z,S,a,V,r,g,s,b,t', Values=None)
+MaTrace_System.FlowDict['C_5_6'] = msc.Flow(Name = 'Batteries in sold vehicles', P_Start = 5, P_End = 6,
+                                            Indices = 'z,S,a,V,r,g,s,b,t', Values=None)
 
 ## Flows to be used for materials
 MaTrace_System.FlowDict['E_1_2'] = msc.Flow(Name = 'Materials sold to vehicle manufacturer by part', P_Start = 1, P_End = 2,
@@ -596,7 +600,7 @@ e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/D
 # scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
 
 
-8114#%% 
+#%% 
 def results_Sofia():
     # Exporting results for Sofia
     # Baseline values for the stock
@@ -5865,6 +5869,68 @@ def export_sensitivity_over_time():
     
     df.to_excel('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/sensitivity_over_time.xlsx')
         
+def calculate_capacities():
+    MaTrace_System.FlowDict['C_2_3'].Values[:,:,:,:,r,:,:,:,:] = np.einsum('zSaVgsbt,bt->zSaVgsbt', MaTrace_System.FlowDict['B_2_3'].Values[:,:,:,:,r,:,:,:,:], \
+        MaTrace_System.ParameterDict['Capacity'].Values[:,0,:])
+    MaTrace_System.FlowDict['C_5_6'].Values[:,:,:,:,r,:,:,:,:] = np.einsum('zSaVgsbt,bt->zSaVgsbt', MaTrace_System.FlowDict['B_2_3'].Values[:,:,:,:,r,:,:,:,:], \
+        MaTrace_System.ParameterDict['Capacity'].Values[:,0,:])
+    # Assume that only 50% of vehicles are V2G ready, and only 50% parked and plugged and that they only make 50% of their capacity available for V2G
+    v2g = 0.5
+    parked = 0.5
+    cap_av = 0.5
+    MaTrace_System.StockDict['C_3'].Values[:,:,:,:,r,:,:] = v2g * parked * cap_av * np.einsum('zSaVgsbtc,bc->zSaVgt', MaTrace_System.StockDict['B_C_3'].Values[:,:,:,:,r,:,:,:,:,:], \
+        MaTrace_System.ParameterDict['Capacity'].Values[:,0,:])
+    # Assume that all SLBs are equally degraded to 70% of original capacity
+    deg = 0.7
+    MaTrace_System.StockDict['C_6'].Values[:,:,:,:,:,r,:,:] = deg * np.einsum('zSaRVgbtc,bc->zSaRVbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,:,:,:,r,:,:,0,:,:], \
+        MaTrace_System.ParameterDict['Capacity'].Values[:,0,:])
+
+    # Plot results
+    '''
+    Plotting the results for just a few example scenarios with an unconstrained model. 
+    This means that we do not restrict the capacity we install to the demand for energy
+    storage, but we just install whatever is available. We can compare these impacts to 
+    using only new batteries instead in a first iteration. 
+    '''
+    fig, ax = plt.subplots(1,2, figsize=(20,7))
+    stock_cycler = cycler(color=sns.color_palette('Pastel1', 20)) #'Set2', 'Paired', 'YlGnBu'
+    custom_cycler = cycler(color=sns.color_palette('Set3', 20)) #'Set2', 'Paired', 'YlGnBu'
+    z = 1 
+    S = 1 
+    a = 0
+    V = 1
+    R = 2
+    ax[0].set_prop_cycle(custom_cycler)
+    ax[0].stackplot(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
+                np.einsum('gsbt->bt', MaTrace_System.FlowDict['C_2_3'].Values[z,S,a,V,r,:,:,:,55::]/1e6))
+    ax[0].set_ylabel('Capacity [TWh]',fontsize =18)
+    right_side = ax[0].spines["right"]
+    right_side.set_visible(False)
+    top = ax[0].spines["top"]
+    top.set_visible(False)
+    ax[0].legend([MaTrace_System.IndexTable['Classification']['Battery_Chemistry'].Items[k] for k in np.einsum('bt->b', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[a,1,:,55:]).nonzero()[0].tolist()], loc='upper left',prop={'size':10})
+    ax[0].set_title('Inflow of battery capacity by chemistry', fontsize=20)
+    ax[0].set_xlabel('Year',fontsize =16)
+    #ax.set_ylim([0,5])
+    ax[0].tick_params(axis='both', which='major', labelsize=18)
+
+    ax[1].set_prop_cycle(stock_cycler)
+    ax[1].stackplot(MaTrace_System.IndexTable['Classification']['Time'].Items[55::], 
+                [np.einsum('gt->t', MaTrace_System.StockDict['C_3'].Values[z,S,a,V,r,:,55::]/1e6),\
+                    np.einsum('bt->t', MaTrace_System.StockDict['C_6'].Values[z,S,a,R,V,r,:,55::]/1e6)]) 
+    ax[1].set_ylabel('Capacity stock [TWh]',fontsize =18)
+    right_side = ax[1].spines["right"]
+    right_side.set_visible(False)
+    top = ax[1].spines["top"]
+    top.set_visible(False)
+    ax[1].legend(['V2G', 'SLB'], loc='upper left',prop={'size':15})
+    ax[1].set_title('Installed capacity by technology', fontsize=20)
+    ax[1].set_xlabel('Year',fontsize =18)
+    ax[1].tick_params(axis='both', which='major', labelsize=15)
+    #fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/capacities')
+
+
+
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
     replacement_rate = 0.8
@@ -5973,7 +6039,6 @@ def model_case_6():
                                 MaTrace_System.StockDict['P_C_6'].Values[z,S,a,R,V,r,g,b,0,:,:] = slb_model.s_c.copy()
                                 MaTrace_System.FlowDict['P_6_7'].Values[z,S,a,R,V,r,g,b,0,:,:] = slb_model.o_c.copy()
 
-    #%%
     # Compute total stock
     for a in range(Na):
         MaTrace_System.StockDict['P_6'].Values[:,:,a,:,:,r,:,0,:]         = np.einsum('zSRVgbtc->zSRVbt', MaTrace_System.StockDict['P_C_6'].Values[:,:,a,:,:,r,:,:,0,:,:])
@@ -5982,7 +6047,6 @@ def model_case_6():
         for R in range(NR):
             MaTrace_System.FlowDict['P_5_8'].Values[:,:,a,R,:,r,:,:,:,:,:]            =  np.einsum('zSVgsbptc->zSVgbptc', MaTrace_System.FlowDict['P_3_4_tc'].Values[:,:,a,:,r,:,:,:,:,:,:]) - MaTrace_System.FlowDict['P_5_6'].Values[:,:,a,R,:,r,:,:,:,:,:]
 
-    #%%
     ### Material layer
     for z in range(Nz):
         # for S in range(NS):
