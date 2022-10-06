@@ -449,7 +449,9 @@ tau_cm = 5
 lt_cm  = np.array([12])
 sd_cm  = np.array([5])
 
-
+# Adding ICE lifetime
+ice_model = pcm.ProductComponentModel(t = range(0,Nt), lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) })
+ice = ice_model.compute_sf_pr()
 
 r=5 #choose the regions to be calculated-. r is GLOBAL
 cap = np.zeros((NS, Nr, Ng, Ns, Nb, Nt))
@@ -458,8 +460,14 @@ for z in range(Nz):
         for S in range(NS):
             for g in [1,2]:
                 # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
-                Model                                                     = pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
+                Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
                     lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
+                # Initialize stock and inflows
+                
+                MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,0,:,0,:] = np.einsum('c,Vsc->VsC', ice[0,:], np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,0,:,:] ,np.einsum('c,c->c', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,0,0],Model.sc_pr.copy())))
+                
+                
+                
                 Model.case_3()
 
                 MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,np.einsum('c,tc->tc', MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,g,:],Model.sc_pr.copy()))
