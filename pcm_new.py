@@ -2066,7 +2066,7 @@ class ProductComponentModel(object):
             else:
                 shares[2,t] = 0
                 shares[1,t] = 0
-            
+        # Calculate values for PHEVs
         self.sc3_pr  = np.einsum('tp,p->tp', np.einsum('tpc->tp', self.s1_tpc), shares[2,:])
         self.sc3_cm  = np.einsum('tc,c->tc', np.einsum('tpc->tc', self.s1_tpc), shares[2,:])
         self.s3_pr  = np.einsum('tp->t', self.sc3_pr)
@@ -2076,6 +2076,7 @@ class ProductComponentModel(object):
         self.i3_pr = np.einsum('c,c->c', self.i1_pr, shares[2,:])
         self.i3_cm = np.einsum('c,c->c', self.i1_cm, shares[2,:])
         
+        # Calculate values for BEVs
         self.sc1_pr  = np.einsum('tp,p->tp', np.einsum('tpc->tp', self.s1_tpc), shares[1,:])
         self.sc1_cm  = np.einsum('tc,c->tc', np.einsum('tpc->tc', self.s1_tpc), shares[1,:])
         self.s1_pr  = np.einsum('tp->t', self.sc1_pr)
