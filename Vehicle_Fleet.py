@@ -452,50 +452,49 @@ cap = np.zeros((NS, Nr, Ng, Ns, Nb, Nt))
 for z in range(Nz):
     #for r in range(0,Nr):
         for S in range(NS):
-            # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
-            Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
-                lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=0, reuse_coeff=0)
-            # Initialize stock and inflows
-            
-            Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
-            '''
-            Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
-            values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
-            since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
-            '''
-            g = 1 # BEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc1_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
-            
-            g = 2 # PHEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc3_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
-            
             for g in [1,2]:
+                # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
+                Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
+                    lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=0, reuse_coeff=0)
+                # Initialize stock and inflows
+                
+                Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
+                '''
+                Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
+                values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
+                since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
+                '''
+                if g == 1: 
+                    MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
+                    MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                    MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
+                    MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
+                
+                    ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                    MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                        ,Model.sc1_cm.copy()))
+                    MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    # Battery inflows within car
+                    MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                    # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                    MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                        Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
+                elif g == 2: 
+                    MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
+                    MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                    MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
+                    MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
+                
+                    ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                    MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                        ,Model.sc3_cm.copy()))
+                    MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    # Battery inflows within car
+                    MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                    # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                    MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                        Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
+                
                 MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:])
                 MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:])
                 # Batteries after vehicle has been dismantled
@@ -540,7 +539,7 @@ for z in range(Nz):
 
                 Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
                 follow its own degradation curve.  
-                '''
+                    '''
 # Computing SLB stock after aggregating inflows
 Model_slb                                                       = pcm.ProductComponentModel(t = range(0,Nt),  lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
 # Compute the survival curve of the batteries with the additional lenght for the last tau years
@@ -597,6 +596,13 @@ for z in range(Nz):
                 for h in range(Nh):
                     MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# +MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:] # Solving recycling loop z,S,a,R,V,r,p,e,h,t
 
+# save results
+
+np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_base', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
+np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_base', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
+np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_base', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_base', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+
 # %%
 # Storylines
 from cycler import cycler
@@ -612,7 +618,7 @@ e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/D
 # bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
 # slow = MaTrace_System.FlowDict['E_0_1'].Values[2,0,1,1,1,r,:,:,1,:].sum(axis=0)
 # scen_5 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,5,2,1,r,:,:,2,:].sum(axis=0)
-
+primary_total = pd.read_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
 
 #%% 
 def results_Sofia():
@@ -2440,7 +2446,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
     top.set_visible(False)
-    ax[1,0].set_ylim([-40,0])
+    # ax[1,0].set_ylim([-40,0])
     
     ax[1,1].set_prop_cycle(custom_cycler)
     z = 1 # Base
@@ -2501,7 +2507,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
     top.set_visible(False)
-    ax[2,1].set_ylim([-23,0])
+    # ax[2,1].set_ylim([-23,0])
     
     ax[2,2].set_prop_cycle(custom_cycler)
     V = 1 # Base
@@ -2516,7 +2522,7 @@ def sensitivity_over_time():
     right_side.set_visible(False)
     top = ax[2,2].spines["top"]
     top.set_visible(False)
-    ax[2,2].set_ylim([-17,0])
+    # ax[2,2].set_ylim([-17,0])
     
     fig.legend(loc='lower left', prop={'size':25}, bbox_to_anchor =(0.25, 0.03), ncol = 5, columnspacing = 1, handletextpad = 0.5, handlelength = 2)
     fig.suptitle('Change in material demand for a given intervention', fontsize=30)
@@ -3002,14 +3008,16 @@ def sensitivity_analysis_newcolor():
     r=5
     custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
+    # e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # primary_total = pd.read_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
     EV3 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
     EV4 = MaTrace_System.FlowDict['E_0_1'].Values[2,2,4,2,1,r,:,:,1,:].sum(axis=0)
     EV5 = e01_replacements[0,2,7,0,0,r,:,:,0,:].sum(axis=0)
-    alpha = 0.02
+    alpha = 0.01
     fig, ax = plt.subplots(4,2,figsize=(26,28))
     # Define sensitivity analysis for Ni
     e = 7 # Ni
@@ -3026,6 +3034,9 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                # Values from long lt
+                                ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3033,6 +3044,9 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                # Values from long lt
+                                ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3040,6 +3054,9 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                # Values from long lt
+                                ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     scen_cycler = cycler(color= [sns.color_palette('tab20c')[8], sns.color_palette('tab20c')[9],sns.color_palette('tab20c')[4], sns.color_palette('tab20c')[0], sns.color_palette('tab20c')[1]] )
     ax[0,0].set_prop_cycle(scen_cycler)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3054,6 +3071,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3)
     ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         2.51, 'k', marker="*", markersize=15) # Mine production of Ni, page 50 of report. In metal content
+    # Add statistical analysis
+    ax[0,0].boxplot(primary_total[(primary_total['Material']=='Ni')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[0,0].boxplot(primary_total[(primary_total['Material']=='Ni')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[0,0].boxplot(primary_total[(primary_total['Material']=='Ni')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
@@ -3062,7 +3101,7 @@ def sensitivity_analysis_newcolor():
     ax[0,0].set_title('a) Nickel', fontsize=20)
     ax[0,0].set_xlabel('Year',fontsize =16)
     ax[0,0].set_ylim([0,17.5])
-    ax[0,0].set_xlim([2019,2050])
+    ax[0,0].set_xlim([2019,2051])
     ax[0,0].tick_params(axis='both', which='major', labelsize=18)
 
     ## Plot Li
@@ -3081,6 +3120,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3088,6 +3129,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3095,6 +3138,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     ax[0,1].set_prop_cycle(scen_cycler)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV1[e,65::]/1000000, linewidth=3)
@@ -3108,6 +3153,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3)
     ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         0.085, 'k', marker="*", markersize=15) # Li minerals production, page 44, Li content world total
+    # Add statistical analysis
+    ax[0,1].boxplot(primary_total[(primary_total['Material']=='Li')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[0,1].boxplot(primary_total[(primary_total['Material']=='Li')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[0,1].boxplot(primary_total[(primary_total['Material']=='Li')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
@@ -3116,7 +3183,7 @@ def sensitivity_analysis_newcolor():
     ax[0,1].set_title('b) Lithium', fontsize=20)
     ax[0,1].set_xlabel('Year',fontsize =16)
     ax[0,1].set_ylim([0,4.5])
-    ax[0,1].set_xlim([2019,2050])
+    ax[0,1].set_xlim([2019,2051])
     ax[0,1].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Co
@@ -3135,6 +3202,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3142,6 +3211,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3149,6 +3220,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[1,0].set_prop_cycle(scen_cycler)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3163,6 +3236,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3)
     ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         0.126, 'k', marker="*", markersize=15) # Co mine production, page 16, metal content world total
+    # Add statistical analysis
+    ax[1,0].boxplot(primary_total[(primary_total['Material']=='Co')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[1,0].boxplot(primary_total[(primary_total['Material']=='Co')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[1,0].boxplot(primary_total[(primary_total['Material']=='Co')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
@@ -3171,7 +3266,7 @@ def sensitivity_analysis_newcolor():
     ax[1,0].set_title('c) Cobalt', fontsize=20)
     ax[1,0].set_xlabel('Year',fontsize =16)
     ax[1,0].set_ylim([0,3])
-    ax[1,0].set_xlim([2019,2050])
+    ax[1,0].set_xlim([2019,2051])
     ax[1,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot P
@@ -3212,6 +3307,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3219,6 +3316,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3226,6 +3325,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[1,1].set_prop_cycle(scen_cycler)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3237,7 +3338,28 @@ def sensitivity_analysis_newcolor():
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
-                                        EV5[e,65::]/1000000,  linewidth=3)
+                                        EV5[e,65::]/1000000,  linewidth=3)# Add statistical analysis
+    ax[1,1].boxplot(primary_total[(primary_total['Material']=='P')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[1,1].boxplot(primary_total[(primary_total['Material']=='P')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[1,1].boxplot(primary_total[(primary_total['Material']=='P')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     right_side = ax[1,1].spines["right"]
     ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
     right_side.set_visible(False)
@@ -3249,7 +3371,7 @@ def sensitivity_analysis_newcolor():
     ax2.set_title('d) Phosphorus', fontsize=20)
     ax2.tick_params(axis='both', which='major', labelsize=18)
     ax[1,1].set_xlabel('Year',fontsize =16)
-    ax[1,1].set_xlim([2019,2050])
+    ax[1,1].set_xlim([2019,2051])
     ax[1,1].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Al
@@ -3268,6 +3390,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3275,6 +3399,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3282,6 +3408,9 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                # Values from case 6
+                                ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[2,0].set_prop_cycle(scen_cycler)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3296,6 +3425,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3)
     ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         65.4, 'k', marker="*", markersize=15) # production of primary aluminium, page 4
+    # Add statistical analysis
+    ax[2,0].boxplot(primary_total[(primary_total['Material']=='Al')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[2,0].boxplot(primary_total[(primary_total['Material']=='Al')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[2,0].boxplot(primary_total[(primary_total['Material']=='Al')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
@@ -3304,7 +3455,7 @@ def sensitivity_analysis_newcolor():
     ax[2,0].set_title('e) Aluminium', fontsize=20)
     ax[2,0].set_xlabel('Year',fontsize =16)
     ax[2,0].set_ylim([0,70])
-    ax[2,0].set_xlim([2019,2050])
+    ax[2,0].set_xlim([2019,2051])
     ax[2,0].tick_params(axis='both', which='major', labelsize=18)
     
     ## Plot Graphite
@@ -3323,6 +3474,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3330,6 +3483,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3337,6 +3492,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[2,1].set_prop_cycle(scen_cycler)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3351,6 +3508,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3)
     ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         1, 'k', marker="*", markersize=15) # Production of graphite, page 29
+    # Add statistical analysis
+    ax[2,1].boxplot(primary_total[(primary_total['Material']=='Graphite')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[2,1].boxplot(primary_total[(primary_total['Material']=='Graphite')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[2,1].boxplot(primary_total[(primary_total['Material']=='Graphite')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
@@ -3359,7 +3538,7 @@ def sensitivity_analysis_newcolor():
     ax[2,1].set_title('f) Graphite', fontsize=20)
     ax[2,1].set_xlabel('Year',fontsize =16)
     ax[2,1].set_ylim([0,35])
-    ax[2,1].set_xlim([2019,2050])
+    ax[2,1].set_xlim([2019,2051])
     ax[2,1].tick_params(axis='both', which='major', labelsize=18)
     
     
@@ -3400,6 +3579,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3407,6 +3588,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3414,6 +3597,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[3,0].set_prop_cycle(scen_cycler)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3426,6 +3611,29 @@ def sensitivity_analysis_newcolor():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
+    # Add statistical analysis
+    ax[3,0].boxplot(primary_total[(primary_total['Material']=='Mn')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[3,0].boxplot(primary_total[(primary_total['Material']=='Mn')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[3,0].boxplot(primary_total[(primary_total['Material']=='Mn')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    
     ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
     right_side = ax[3,0].spines["right"]
     right_side.set_visible(False)
@@ -3437,7 +3645,7 @@ def sensitivity_analysis_newcolor():
     ax3.set_title('g) Manganese', fontsize=20)
     ax3.tick_params(axis='both', which='major', labelsize=18)
     ax[3,0].set_xlabel('Year',fontsize =16)
-    ax[3,0].set_xlim([2019,2050])
+    ax[3,0].set_xlim([2019,2051])
     ax[3,0].tick_params(axis='both', which='major', labelsize=18)
     
     
@@ -3457,6 +3665,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
+                                ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[0], alpha=alpha)
                             if S==1:
                                 # Values from case 3
                                 ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3464,6 +3674,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
+                                ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[1], alpha=alpha)
                             if S==2:
                                 # Values from case 3
                                 ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3471,6 +3683,8 @@ def sensitivity_analysis_newcolor():
                                 # Values from case 6
                                 ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         np.einsum('pt->t', e01_replacements[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
+                                ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
+                                        np.einsum('pt->t', e01_long_lt[z,S,a,R,V,r,:,e,h,65::])/1000000, color=sns.color_palette('Pastel2', 5)[2], alpha=alpha)
     
     ax[3,1].set_prop_cycle(scen_cycler)
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
@@ -3485,6 +3699,28 @@ def sensitivity_analysis_newcolor():
                                         EV5[e,65::]/1000000,  linewidth=3, label='MRS5, Fast transition - diversified portfolio with resource efficiency')
     ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
                                         24.9, 'k', marker="*", markersize=15) # Refined production of copper, page 20
+    # Add statistical analysis
+    ax[3,1].boxplot(primary_total[(primary_total['Material']=='Cu')&(primary_total['Time']==2030)].value.values/1e3, positions=[2030], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[3,1].boxplot(primary_total[(primary_total['Material']=='Cu')&(primary_total['Time']==2040)].value.values/1e3, positions=[2040], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
+    ax[3,1].boxplot(primary_total[(primary_total['Material']=='Cu')&(primary_total['Time']==2050)].value.values/1e3, positions=[2050], widths=1, patch_artist=True,
+                showmeans=True, showfliers=False,
+                medianprops={"color": "black", "linewidth": 1.5},
+                boxprops={"facecolor": "silver", "edgecolor": "grey",
+                          "linewidth": 1.5},
+                whiskerprops={"color": "grey", "linewidth": 1.5},
+                capprops={"color": "grey", "linewidth": 1.5})
     ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
@@ -3509,7 +3745,7 @@ def sensitivity_analysis_newcolor():
     ax[3,1].set_title('h) Copper', fontsize=20)
     ax[3,1].set_xlabel('Year',fontsize =16)
     ax[3,1].set_ylim([0,26])
-    ax[3,1].set_xlim([2019,2050])
+    ax[3,1].set_xlim([2019,2051])
     ax[3,1].tick_params(axis='both', which='major', labelsize=18)
     lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
@@ -5396,7 +5632,8 @@ def export_primary_demand_df():
     writer.save()
    
 def export_primary_demand_df_new(): 
-    z,S,a,R,V,r,e,h,t = pd.core.reshape.util.cartesian_product(
+    
+    z,S,a,R,V,r,e,h,i,t = pd.core.reshape.util.cartesian_product(
 ##z,S,a,R,V,r,p,e,h,t
     [
     IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
@@ -5408,13 +5645,15 @@ def export_primary_demand_df_new():
     #IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
     IndexTable.Classification[IndexTable.index.get_loc("Element")].Items[:-1],
     IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+    ['Baseline', 'Replacements', 'Long_lt'],
     IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
     ]
     )
 
     file = pd.DataFrame(
-        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Time=t)
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Lifetime=i, Time=t)
     )
+
 
     values = []
     r=5
@@ -5425,16 +5664,24 @@ def export_primary_demand_df_new():
                     for v in range(NV):
                         for e in range(Ne-1):
                             for h in range(Nh):
-                                for t in range(60,Nt):
-                                    value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
-                                    values.append(value)
-
+                                for i in range(3):
+                                    for t in range(60,Nt):
+                                        if i == 0 :
+                                            value = MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                        if i ==1:
+                                            value = e01_replacements[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                        if i ==2:
+                                            value = e01_long_lt[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                    
     file['value'] = values
         
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
-    file.to_excel(writer)
+    # writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
+    # file.to_excel(writer)
     file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
-    writer.save()
+    # writer.save()
     
 def export_secondary_availability_df_new(): 
     z,S,a,R,V,r,e,h,t = pd.core.reshape.util.cartesian_product(
@@ -5941,7 +6188,7 @@ def calculate_capacities():
     ax[1].set_title('Installed capacity by technology', fontsize=20)
     ax[1].set_xlabel('Year',fontsize =18)
     ax[1].tick_params(axis='both', which='major', labelsize=15)
-    #fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/capacities')
+    fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/capacities')
 
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
@@ -5952,98 +6199,100 @@ def model_case_6():
 
 
     r=5 #choose the regions to be calculated-. r is GLOBAL
+    cap = np.zeros((NS, Nr, Ng, Ns, Nb, Nt))
     for z in range(Nz):
         #for r in range(0,Nr):
-        for S in range(NS):
-            # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
-            Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
-                lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=replacement_rate, reuse_coeff=reuse_rate)
-            # Initialize stock and inflows
-            
-            Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
-            '''
-            Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
-            values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
-            since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
-            '''
-            g = 1 # BEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc1_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
-            
-            g = 2 # PHEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc3_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
-            
-            for g in [1,2]:
-                MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:])
-                MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:])
-                # Batteries after vehicle has been dismantled
-                MaTrace_System.FlowDict['M_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
-                ### Battery by weight layer: Multiply the numbers by the weight factor for each chemistry and size
-                # Stocks
-                MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('sb,aVsbtc->aVsbtc', MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:] , MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.StockDict['B_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('aVsbtc,sb->aVsbtc', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] )
-                MaTrace_System.FlowDict['B_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
-                # MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-            
-                ### Battery parts layer
-                MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:]   = np.einsum('sbp,aVsbtc->aVsbptc', MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:] , MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.StockDict['P_3'].Values[z,S,:,:,r,g,:,:,:,:]       = np.einsum('aVsbptc->aVsbpt', MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:])
-                MaTrace_System.FlowDict['P_1_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
-                MaTrace_System.FlowDict['P_2_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
-                MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:] = np.einsum('aVsbtc,sbp->aVsbptc', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
-                MaTrace_System.FlowDict['P_3_4'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbptc->aVsbpt', MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:])
-                MaTrace_System.FlowDict['P_4_5'].Values[z,S,:,:,r,g,:,:,:,:,:]    = MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:]
-                # MaTrace_System.FlowDict['P_5_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbt,sbp->aVsbpt', MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+            for S in range(NS):
+                for g in [1,2]:
+                    # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
+                    Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
+                        lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=replacement_rate, reuse_coeff=reuse_rate)
+                    # Initialize stock and inflows
+                    
+                    Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
+                    '''
+                    Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
+                    values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
+                    since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
+                    '''
+                    if g == 1: 
+                        MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
+                        MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                        MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
+                        MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
+                    
+                        ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                        MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                            ,Model.sc1_cm.copy()))
+                        MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                        # Battery inflows within car
+                        MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                        # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                        MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                            Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
+                    if g == 2: 
+                        MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
+                        MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                        MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
+                        MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
+                    
+                        ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                        MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                            ,Model.sc3_cm.copy()))
+                        MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                        # Battery inflows within car
+                        MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                        # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                        MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                            Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
+                    
+                    MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:])
+                    MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:])
+                    # Batteries after vehicle has been dismantled
+                    MaTrace_System.FlowDict['M_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
+                    ### Battery by weight layer: Multiply the numbers by the weight factor for each chemistry and size
+                    # Stocks
+                    MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('sb,aVsbtc->aVsbtc', MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:] , MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['B_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('aVsbtc,sb->aVsbtc', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] )
+                    MaTrace_System.FlowDict['B_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
+                    # MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
                 
-                '''
-                We calculate the flows of battery modules into reuse. Sicne the casing and other battery parts are assumed to go directly into recyling, 
-                we just write this loop for the modules with index 0 and separately define that all other battery parts go to recycling. 
-                We also consider batteries that caused vehicle outflows, as the requirements here are lower. We can take them out if it does not make sense. 
+                    ### Battery parts layer
+                    MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:]   = np.einsum('sbp,aVsbtc->aVsbptc', MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:] , MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['P_3'].Values[z,S,:,:,r,g,:,:,:,:]       = np.einsum('aVsbptc->aVsbpt', MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_1_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_2_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:] = np.einsum('aVsbtc,sbp->aVsbptc', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    MaTrace_System.FlowDict['P_3_4'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbptc->aVsbpt', MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_4_5'].Values[z,S,:,:,r,g,:,:,:,:,:]    = MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:]
+                    # MaTrace_System.FlowDict['P_5_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbt,sbp->aVsbpt', MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    
+                    '''
+                    We calculate the flows of battery modules into reuse. Sicne the casing and other battery parts are assumed to go directly into recyling, 
+                    we just write this loop for the modules with index 0 and separately define that all other battery parts go to recycling. 
+                    We also consider batteries that caused vehicle outflows, as the requirements here are lower. We can take them out if it does not make sense. 
 
-                The reuse parameter does not indicate the share of batteries that are reused. Rather, it is a condition to reflect decisions on which battery chemistries to 
-                reuse. LFP scenario for instance will define that only LFP chemistries are considered for reuse, but they health assessment still needs to happen. 
-                '''
-                # Calculate inflows to SLB only for the modules. We consider batteries that came from failed vehicles as well, since flow P_3_5 only contains failed batteries
-                MaTrace_System.FlowDict['P_5_6'].Values[z,S,:,:,:,r,g,:,0,:,:]  = np.einsum('Rbt,aVsbtc->aRVbtc', MaTrace_System.ParameterDict['Reuse_rate'].Values[:,:,:], \
-                    MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,0,:,:]) # * Model_slb.sf_cm[t+tau_cm,c] + MaTrace_System.FlowDict['P_3_5'].Values[z,S,:,r,g,:,:,0,t,c]* Model_slb.sf_cm[t+tau_cm,c]) # TODO: Possibly subtract P_5_3 flow if implemented
-                '''
-                Since the batteries are moving from being used in transport to being used in stationary storage, the "lifetime" is no longer the same. 
-                In transportation, we define the lifetime to be the time that the battery is still useful for that purpose, which is widely considered
-                to be until it reaches 80% of its initial capacity. The distribution of the lifetime helps us account for batteries that are more 
-                intensely used than others, but by the time of outflow they should all have more or less the same capacity of around 80%. 
+                    The reuse parameter does not indicate the share of batteries that are reused. Rather, it is a condition to reflect decisions on which battery chemistries to 
+                    reuse. LFP scenario for instance will define that only LFP chemistries are considered for reuse, but they health assessment still needs to happen. 
+                    '''
+                    # Calculate inflows to SLB only for the modules. We consider batteries that came from failed vehicles as well, since flow P_3_5 only contains failed batteries
+                    MaTrace_System.FlowDict['P_5_6'].Values[z,S,:,:,:,r,g,:,0,:,:]  = np.einsum('Rbt,aVsbtc->aRVbtc', MaTrace_System.ParameterDict['Reuse_rate'].Values[:,:,:], \
+                        MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,0,:,:]) # * Model_slb.sf_cm[t+tau_cm,c] + MaTrace_System.FlowDict['P_3_5'].Values[z,S,:,r,g,:,:,0,t,c]* Model_slb.sf_cm[t+tau_cm,c]) # TODO: Possibly subtract P_5_3 flow if implemented
+                    '''
+                    Since the batteries are moving from being used in transport to being used in stationary storage, the "lifetime" is no longer the same. 
+                    In transportation, we define the lifetime to be the time that the battery is still useful for that purpose, which is widely considered
+                    to be until it reaches 80% of its initial capacity. The distribution of the lifetime helps us account for batteries that are more 
+                    intensely used than others, but by the time of outflow they should all have more or less the same capacity of around 80%. 
 
-                Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
-                follow its own degradation curve.  
-            '''
+                    Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
+                    follow its own degradation curve.  
+                        '''
+    # Computing SLB stock after aggregating inflows
+    Model_slb                                                       = pcm.ProductComponentModel(t = range(0,Nt),  lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
     # Compute the survival curve of the batteries with the additional lenght for the last tau years
     '''
     Define the SLB model in advance. We do not compute everything using the dsm as it only takes i as input
@@ -6097,8 +6346,8 @@ def model_case_6():
 
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 def model_long_lt():
     lt_cm  = np.array([16])
@@ -6109,96 +6358,95 @@ def model_long_lt():
     cap = np.zeros((NS, Nr, Ng, Ns, Nb, Nt))
     for z in range(Nz):
         #for r in range(0,Nr):
-        for S in range(NS):
-            # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
-            Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
-                lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=0, reuse_coeff=0)
-            # Initialize stock and inflows
-            
-            Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
-            '''
-            Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
-            values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
-            since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
-            '''
-            g = 1 # BEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc1_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
-            
-            g = 2 # PHEV dynamics
-            MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
-            MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
-            MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
-            MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
-        
-            ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
-            MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
-                ,Model.sc3_cm.copy()))
-            MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-            # Battery inflows within car
-            MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
-            # Battery replacements: Total battery inflows minus inflows of batteries in cars
-            MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
-                Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
-            
-            for g in [1,2]:
-                MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:])
-                MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:])
-                # Batteries after vehicle has been dismantled
-                MaTrace_System.FlowDict['M_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
-                ### Battery by weight layer: Multiply the numbers by the weight factor for each chemistry and size
-                # Stocks
-                MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('sb,aVsbtc->aVsbtc', MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:] , MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.StockDict['B_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('aVsbtc,sb->aVsbtc', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-                MaTrace_System.FlowDict['B_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] )
-                MaTrace_System.FlowDict['B_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
-                # MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
-            
-                ### Battery parts layer
-                MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:]   = np.einsum('sbp,aVsbtc->aVsbptc', MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:] , MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
-                MaTrace_System.StockDict['P_3'].Values[z,S,:,:,r,g,:,:,:,:]       = np.einsum('aVsbptc->aVsbpt', MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:])
-                MaTrace_System.FlowDict['P_1_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
-                MaTrace_System.FlowDict['P_2_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
-                MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:] = np.einsum('aVsbtc,sbp->aVsbptc', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
-                MaTrace_System.FlowDict['P_3_4'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbptc->aVsbpt', MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:])
-                MaTrace_System.FlowDict['P_4_5'].Values[z,S,:,:,r,g,:,:,:,:,:]    = MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:]
-                # MaTrace_System.FlowDict['P_5_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbt,sbp->aVsbpt', MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+            for S in range(NS):
+                for g in [1,2]:
+                    # In this case we assume that the product and component have the same lifetimes and set the delay as 3 years for both goods
+                    Model   =   pcm.ProductComponentModel(t = range(0,Nt), s_pr = MaTrace_System.ParameterDict['Vehicle_stock'].Values[z,r,:]/1000, lt_pr = {'Type': 'Normal', 'Mean': np.array([16]), 'StdDev': np.array([4]) }, \
+                        lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm}, replacement_coeff=0, reuse_coeff=0)
+                    # Initialize stock and inflows
+                    
+                    Model.multiple_stocks(shares= MaTrace_System.ParameterDict['Drive_train_shares'].Values[S,:,:])
+                    '''
+                    Since all the stock dynamics are calculated in the multiple_stocks model, we need to assign the correct
+                    values to each drive train. To save computational time, we only calculate all layers for BEVs and PHEVs
+                    since the other two are only relevant for the stock dynamics, but not for the material demand of LIBs.
+                    '''
+                    if g == 1: 
+                        MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc1_pr.copy())
+                        MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                        MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i1_pr.copy())
+                        MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc1_pr.copy())
+                    
+                        ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                        MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                            ,Model.sc1_cm.copy()))
+                        MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                        # Battery inflows within car
+                        MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                        # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                        MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                            Model.i1_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]
+                    if g == 2: 
+                        MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:]             = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] ,Model.sc3_pr.copy())
+                        MaTrace_System.StockDict['S_3'].Values[z,S,:,r,g,:,:]                 = np.einsum('Vstc->Vst', MaTrace_System.StockDict['S_C_3'].Values[z,S,:,r,g,:,:,:])
+                        MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:]              = np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:],Model.i3_pr.copy())
+                        MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:]              = np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], Model.oc3_pr.copy())
+                    
+                        ### Battery chemistry layer: Here we use the battery stock instead of the vehicle stock
+                        MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,tc->Vstc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:] \
+                            ,Model.sc3_cm.copy()))
+                        MaTrace_System.StockDict['M_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                        # Battery inflows within car
+                        MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abt,Vst->aVsbt', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] ,MaTrace_System.FlowDict['F_2_3'].Values[z,S,:,r,g,:,:])
+                        # Battery replacements: Total battery inflows minus inflows of batteries in cars
+                        MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('abc,Vsc->aVsbc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , np.einsum('Vsc,c->Vsc', MaTrace_System.ParameterDict['Segment_shares'].Values[:,g,:,:], \
+                            Model.i3_cm.copy())) - MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:]            
+                    
+                    MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('abc,Vstc->aVsbtc', MaTrace_System.ParameterDict['Battery_chemistry_shares'].Values[:,g,:,:] , MaTrace_System.FlowDict['F_3_4'].Values[z,S,:,r,g,:,:,:])
+                    MaTrace_System.FlowDict['M_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:])
+                    # Batteries after vehicle has been dismantled
+                    MaTrace_System.FlowDict['M_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
+                    ### Battery by weight layer: Multiply the numbers by the weight factor for each chemistry and size
+                    # Stocks
+                    MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:]     = np.einsum('sb,aVsbtc->aVsbtc', MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:] , MaTrace_System.StockDict['M_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['B_3'].Values[z,S,:,:,r,g,:,:,:]         = np.einsum('aVsbtc->aVsbt', MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:]   = np.einsum('aVsbtc,sb->aVsbtc', MaTrace_System.FlowDict['M_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
+                    MaTrace_System.FlowDict['B_3_4'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbtc->aVsbt', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] )
+                    MaTrace_System.FlowDict['B_4_5'].Values[z,S,:,:,r,g,:,:,:,:]      = MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:] 
+                    # MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:]        = np.einsum('aVsbt,sb->aVsbt', MaTrace_System.FlowDict['M_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Weight'].Values[g,:,:])
                 
-                '''
-                We calculate the flows of battery modules into reuse. Sicne the casing and other battery parts are assumed to go directly into recyling, 
-                we just write this loop for the modules with index 0 and separately define that all other battery parts go to recycling. 
-                We also consider batteries that caused vehicle outflows, as the requirements here are lower. We can take them out if it does not make sense. 
+                    ### Battery parts layer
+                    MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:]   = np.einsum('sbp,aVsbtc->aVsbptc', MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:] , MaTrace_System.StockDict['B_C_3'].Values[z,S,:,:,r,g,:,:,:,:])
+                    MaTrace_System.StockDict['P_3'].Values[z,S,:,:,r,g,:,:,:,:]       = np.einsum('aVsbptc->aVsbpt', MaTrace_System.StockDict['P_C_3'].Values[z,S,:,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_1_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_1_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_2_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbc,sbp->aVsbpc', MaTrace_System.FlowDict['B_2_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:]) 
+                    MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:] = np.einsum('aVsbtc,sbp->aVsbptc', MaTrace_System.FlowDict['B_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    MaTrace_System.FlowDict['P_3_4'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbptc->aVsbpt', MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:])
+                    MaTrace_System.FlowDict['P_4_5'].Values[z,S,:,:,r,g,:,:,:,:,:]    = MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,:,:,:]
+                    # MaTrace_System.FlowDict['P_5_3'].Values[z,S,:,:,r,g,:,:,:,:]      = np.einsum('aVsbt,sbp->aVsbpt', MaTrace_System.FlowDict['B_5_3'].Values[z,S,:,:,r,g,:,:,:], MaTrace_System.ParameterDict['Battery_Parts'].Values[g,:,:,:])
+                    
+                    '''
+                    We calculate the flows of battery modules into reuse. Sicne the casing and other battery parts are assumed to go directly into recyling, 
+                    we just write this loop for the modules with index 0 and separately define that all other battery parts go to recycling. 
+                    We also consider batteries that caused vehicle outflows, as the requirements here are lower. We can take them out if it does not make sense. 
 
-                The reuse parameter does not indicate the share of batteries that are reused. Rather, it is a condition to reflect decisions on which battery chemistries to 
-                reuse. LFP scenario for instance will define that only LFP chemistries are considered for reuse, but they health assessment still needs to happen. 
-                '''
-                # Calculate inflows to SLB only for the modules. We consider batteries that came from failed vehicles as well, since flow P_3_5 only contains failed batteries
-                MaTrace_System.FlowDict['P_5_6'].Values[z,S,:,:,:,r,g,:,0,:,:]  = np.einsum('Rbt,aVsbtc->aRVbtc', MaTrace_System.ParameterDict['Reuse_rate'].Values[:,:,:], \
-                    MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,0,:,:]) # * Model_slb.sf_cm[t+tau_cm,c] + MaTrace_System.FlowDict['P_3_5'].Values[z,S,:,r,g,:,:,0,t,c]* Model_slb.sf_cm[t+tau_cm,c]) # TODO: Possibly subtract P_5_3 flow if implemented
-                '''
-                Since the batteries are moving from being used in transport to being used in stationary storage, the "lifetime" is no longer the same. 
-                In transportation, we define the lifetime to be the time that the battery is still useful for that purpose, which is widely considered
-                to be until it reaches 80% of its initial capacity. The distribution of the lifetime helps us account for batteries that are more 
-                intensely used than others, but by the time of outflow they should all have more or less the same capacity of around 80%. 
+                    The reuse parameter does not indicate the share of batteries that are reused. Rather, it is a condition to reflect decisions on which battery chemistries to 
+                    reuse. LFP scenario for instance will define that only LFP chemistries are considered for reuse, but they health assessment still needs to happen. 
+                    '''
+                    # Calculate inflows to SLB only for the modules. We consider batteries that came from failed vehicles as well, since flow P_3_5 only contains failed batteries
+                    MaTrace_System.FlowDict['P_5_6'].Values[z,S,:,:,:,r,g,:,0,:,:]  = np.einsum('Rbt,aVsbtc->aRVbtc', MaTrace_System.ParameterDict['Reuse_rate'].Values[:,:,:], \
+                        MaTrace_System.FlowDict['P_3_4_tc'].Values[z,S,:,:,r,g,:,:,0,:,:]) # * Model_slb.sf_cm[t+tau_cm,c] + MaTrace_System.FlowDict['P_3_5'].Values[z,S,:,r,g,:,:,0,t,c]* Model_slb.sf_cm[t+tau_cm,c]) # TODO: Possibly subtract P_5_3 flow if implemented
+                    '''
+                    Since the batteries are moving from being used in transport to being used in stationary storage, the "lifetime" is no longer the same. 
+                    In transportation, we define the lifetime to be the time that the battery is still useful for that purpose, which is widely considered
+                    to be until it reaches 80% of its initial capacity. The distribution of the lifetime helps us account for batteries that are more 
+                    intensely used than others, but by the time of outflow they should all have more or less the same capacity of around 80%. 
 
-                Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
-                follow its own degradation curve.  
-                '''
+                    Therefore, the remaining second life can be approximated with a normal distribution that would have an initial capacity of 80% and would
+                    follow its own degradation curve.  
+                        '''
     # Computing SLB stock after aggregating inflows
     Model_slb                                                       = pcm.ProductComponentModel(t = range(0,Nt),  lt_cm = {'Type': 'Normal', 'Mean': lt_cm, 'StdDev': sd_cm})
     # Compute the survival curve of the batteries with the additional lenght for the last tau years
@@ -6254,9 +6502,9 @@ def model_long_lt():
 
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:,:])
-    # np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:,:])
+    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:,:])
 
 # %%
