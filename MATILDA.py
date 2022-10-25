@@ -19,7 +19,7 @@ from scipy.stats import norm
 from tqdm import tqdm
 import time
 import matplotlib
-import pcm_new as pcm
+import product_component_model as pcm
 mpl_logger = log.getLogger("matplotlib")
 mpl_logger.setLevel(log.WARNING)
 xlrd.xlsx.Element_has_iter = True
@@ -643,6 +643,8 @@ e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/D
 e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
 e23_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt.npy')
 e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
+e81_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt.npy')
+
 # sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0) # z,S,a,R,V,r,p,e,h,t
 # resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,1,r,:,:,0,:].sum(axis=0)
 # bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,1,r,:,:,1,:].sum(axis=0)
@@ -3134,7 +3136,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
+    ax[0,0].set_ylabel('Primary Ni demand [Mt/year]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
     top = ax[0,0].spines["top"]
@@ -3227,7 +3229,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
+    ax[0,1].set_ylabel('Primary Li demand [Mt/year]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
     top = ax[0,1].spines["top"]
@@ -3321,7 +3323,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
+    ax[1,0].set_ylabel('Primary Co demand [Mt/year]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
@@ -3435,7 +3437,7 @@ def sensitivity_analysis_newcolor():
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
     right_side = ax[1,1].spines["right"]
-    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
+    ax[1,1].set_ylabel('Primary P demand [Mt/year]',fontsize =18)
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
@@ -3532,7 +3534,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
+    ax[2,0].set_ylabel('Primary Al demand [Mt/year]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
     top = ax[2,0].spines["top"]
@@ -3626,7 +3628,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
+    ax[2,1].set_ylabel('Primary Graphite demand [Mt/year]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
@@ -3741,7 +3743,7 @@ def sensitivity_analysis_newcolor():
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
     
-    ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
+    ax[3,0].set_ylabel('Primary Mn demand [Mt/year]',fontsize =18)
     right_side = ax[3,0].spines["right"]
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
@@ -3839,7 +3841,7 @@ def sensitivity_analysis_newcolor():
                 whiskerprops={"color": "grey", "linewidth": 1.5},
                 whis=100,
                 capprops={"color": "grey", "linewidth": 1.5})
-    ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
+    ax[3,1].set_ylabel('Primary Cu demand [Mt/year]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
     top = ax[3,1].spines["top"]
@@ -5799,10 +5801,10 @@ def export_primary_demand_df_new():
     # writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
     # file.to_excel(writer)
     file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
-    # writer.save()
+    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.csv')
     
-def export_secondary_availability_df_new(): 
-    z,S,a,R,V,r,e,h,t = pd.core.reshape.util.cartesian_product(
+def export_secondary_availability_df_new():     
+    z,S,a,R,V,r,e,h,i,t = pd.core.reshape.util.cartesian_product(
     [
     IndexTable.Classification[IndexTable.index.get_loc("Stock_Scenarios")].Items,
     IndexTable.Classification[IndexTable.index.get_loc("Scenario")].Items,
@@ -5813,13 +5815,15 @@ def export_secondary_availability_df_new():
     #IndexTable.Classification[IndexTable.index.get_loc("Battery_Parts")].Items,
     IndexTable.Classification[IndexTable.index.get_loc("Element")].Items[:-1],
     IndexTable.Classification[IndexTable.index.get_loc("Recycling_Process")].Items,
+    ['Baseline', 'Replacements', 'Long_lt'],
     IndexTable.Classification[IndexTable.index.get_loc("Time")].Items[60::]
     ]
     )
-    
+
     file = pd.DataFrame(
-        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Time=t)
+        dict(Stock_scenario=z, EV_penetration_scenario=S, Chemistry_scenario=a, Reuse_scenario=R, Vehicle_size_scenario = V, Region=r,  Material=e,Recycling_Process=h, Lifetime=i, Time=t)
     )
+
 
     values = []
     r=5
@@ -5830,16 +5834,24 @@ def export_secondary_availability_df_new():
                     for v in range(NV):
                         for e in range(Ne-1):
                             for h in range(Nh):
-                                for t in range(60,Nt):
-                                    value = MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
-                                    values.append(value)
-
+                                for i in range(3):
+                                    for t in range(60,Nt):
+                                        if i == 0 :
+                                            value = MaTrace_System.FlowDict['E_8_1'].Values[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                        if i ==1:
+                                            value = e81_replacements[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                        if i ==2:
+                                            value = e81_long_lt[z,S,a,R,v,r,:,e,h,t].sum(axis=0)/1000 #z,S,a,R,V,r,p,e,h,t
+                                            values.append(value)
+                                    
     file['value'] = values
         
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new.xlsx', engine='xlsxwriter')
-    file.to_excel(writer)
+    # writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
+    # file.to_excel(writer)
     file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new')
-    writer.save()
+    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new.csv')
     
 def export_secondary_availability_df(): 
     z,S,a,R,V,r,p,e,h,t = pd.core.reshape.util.cartesian_product(
@@ -6001,6 +6013,8 @@ def export_storylines():
     file2.to_excel(writer, sheet_name='Secondary_materials')
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
+    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_primary.csv')
+    file2.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_secondary.csv')
  
 def export_battery_flows():
     z,S,a,V,r,g,s,b,t = pd.core.reshape.util.cartesian_product(
