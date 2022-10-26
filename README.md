@@ -16,3 +16,4 @@ Below you can find a decription of the data and folders included in this reposit
     - The input data files as numpy arrays are provided openly in the following repository: https://doi.org/10.5281/zenodo.7252047 
     - To run the model, the files need to be downloaded and the path to read them in MATILDA needs to be updated as indicated in the code
 6) product_component_model.py and ODYM_Classes.py: Needed to compute the stock dynamics. The product_component_model presented here is an extention to the framework presented by Aguilar Lopez at al. here: https://doi.org/10.1111/jiec.13316 
+7) requirements.txt: Requierments needed to run the model
