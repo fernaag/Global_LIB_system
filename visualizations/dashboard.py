@@ -19,12 +19,12 @@ app = Dash(__name__)
 
 fig = go.Figure()
 
-df = pd.read_pickle(os.getcwd()+'/visualizations/data/primary_material_demand_new')
-rec = pd.read_pickle(os.getcwd()+'/visualizations/data/secondary_material_demand_new') 
-flows = pd.read_pickle(os.getcwd()+'/visualizations/data/system_flows_new') 
-out = pd.read_pickle(os.getcwd()+'/visualizations/data/outflows') 
-stock = pd.read_pickle(os.getcwd()+'/visualizations/data/stock') 
-slb = pd.read_pickle(os.getcwd()+'/visualizations/data/slb_capacity') 
+df = pd.read_pickle(os.getcwd()+'/data/primary_material_demand_new')
+rec = pd.read_pickle(os.getcwd()+'/data/secondary_material_demand_new') 
+flows = pd.read_pickle(os.getcwd()+'/data/system_flows_new') 
+out = pd.read_pickle(os.getcwd()+'/data/outflows') 
+stock = pd.read_pickle(os.getcwd()+'/data/stock') 
+slb = pd.read_pickle(os.getcwd()+'/data/slb_capacity') 
 
 app.layout = html.Div(
     [
