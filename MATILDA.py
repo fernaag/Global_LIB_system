@@ -135,7 +135,7 @@ NV = len(IndexTable.Classification[IndexTable.index.get_loc('Size_Scenarios')].I
 
 '''
 Update the data path and make sure that the path structure below is in accordance with your local path
-where the data is stored. All relevant files can be found in #TODO: add link to Zenodo here
+where the data is stored. All relevant files can be found in https://doi.org/10.5281/zenodo.7252047
 '''
 
 data_path = '/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/03_scenario_data/global_model'
