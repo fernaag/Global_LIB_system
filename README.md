@@ -17,3 +17,6 @@ Below you can find a decription of the data and folders included in this reposit
     - To run the model, the files need to be downloaded and the path to read them in MATILDA needs to be updated as indicated in the code
 6) product_component_model.py and ODYM_Classes.py: Needed to compute the stock dynamics. The product_component_model presented here is an extention to the framework presented by Aguilar Lopez at al. here: https://doi.org/10.1111/jiec.13316 
 7) requirements.txt: Requierments needed to run the model
+8) visualizations: Running dashboard.py allows the user to initialize a dynamic and interactive visualization tool to explore all of the scenarios included in MATILDA. They can be reached by going to the following site in a web browser while running the script: http://127.0.0.1:8050/
+
+All model scenarios can be explored at the following website: http://10.212.26.107:8051/ (to be made publically available soon)
