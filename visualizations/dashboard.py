@@ -28,13 +28,13 @@ fig_in = go.Figure()
 fig_out = go.Figure()
 fig_stock = go.Figure()
 fig_slb = go.Figure()
-df = pd.read_pickle(os.path.join(os.getcwd(),'data/primary_material_demand_new'))
-rec = pd.read_pickle(os.getcwd()+'data/secondary_material_demand_new') 
-flows = pd.read_pickle(os.getcwd()+'data/system_flows_new') 
-out = pd.read_pickle(os.getcwd()+'data/outflows') 
+df = pd.read_pickle(os.path.join(os.getcwd(),'/data/primary_material_demand_new'))
+rec = pd.read_pickle(os.getcwd()+'/data/secondary_material_demand_new') 
+flows = pd.read_pickle(os.getcwd()+'/data/system_flows_new') 
+out = pd.read_pickle(os.getcwd()+'/data/outflows') 
 stock = pd.read_pickle(os.getcwd()+'/data/stock') 
-slb = pd.read_pickle(os.getcwd()+'data/slb_capacity') 
-logo_path = os.getcwd()+'data/indecol.png'
+slb = pd.read_pickle(os.getcwd()+'/data/slb_capacity') 
+logo_path = os.getcwd()+'/data/indecol.png'
 # Adding logo
 html.Img(src=logo_path)
 # Using base64 encoding and decoding
