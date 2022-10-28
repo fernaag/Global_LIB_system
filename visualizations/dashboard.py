@@ -303,7 +303,7 @@ def plot(
                  (flows['EV_penetration_scenario']==ev_scenario)& (flows['Vehicle_size_scenario']==vehicle_size)].Battery_Chemistry.values,
             line_group=flows[(flows['Stock_scenario']==stock_scenario) & (flows['Chemistry_scenario']==chem_scenario)& \
                  (flows['EV_penetration_scenario']==ev_scenario)& (flows['Vehicle_size_scenario']==vehicle_size)].Drive_Train.values,
-            color_discrete_sequence=px.colors.qualitative.Alphabet,
+            color_discrete_sequence=px.colors.qualitative.Alphabet, labels={'color':'Chemistry'}
         )
     fig_in.update_layout(title_text='Inflows by chemistry', font_size=16)
     fig_in.update_yaxes(title_text="Vehicle sales [million]")
@@ -320,7 +320,7 @@ def plot(
                  (out['EV_penetration_scenario']==ev_scenario)& (out['Vehicle_size_scenario']==vehicle_size)].Battery_Chemistry.values,
             line_group=out[(out['Stock_scenario']==stock_scenario) & (out['Chemistry_scenario']==chem_scenario)& \
                  (out['EV_penetration_scenario']==ev_scenario)& (out['Vehicle_size_scenario']==vehicle_size)].Drive_Train.values,
-            color_discrete_sequence=px.colors.qualitative.Alphabet,
+            color_discrete_sequence=px.colors.qualitative.Alphabet, labels={'color':'Chemistry'}
         )
     fig_out.update_layout(title_text='Outflows by chemistry', font_size=16)
     fig_out.update_yaxes(title_text="Vehicle outflows [million]")
@@ -337,7 +337,7 @@ def plot(
                  (stock['EV_penetration_scenario']==ev_scenario)& (stock['Vehicle_size_scenario']==vehicle_size)].Drive_Train.values,
             line_group=stock[(stock['Stock_scenario']==stock_scenario) & \
                  (stock['EV_penetration_scenario']==ev_scenario)& (stock['Vehicle_size_scenario']==vehicle_size)].Size.values,
-            color_discrete_sequence=px.colors.qualitative.Set1,
+            color_discrete_sequence=px.colors.qualitative.Set1, labels={'color':'Drive train'}
         )
     fig_stock.update_layout(title_text='Stock by drive train', font_size=16)
     fig_stock.update_yaxes(title_text="Vehicle stock [million]")
@@ -355,7 +355,7 @@ def plot(
             color=slb[(slb['Stock_scenario']==stock_scenario) & \
                  (slb['EV_penetration_scenario']==ev_scenario)& (slb['Vehicle_size_scenario']==vehicle_size)\
                      & (slb['Reuse_scenario']==reuse_scenario)& (slb['Chemistry_scenario']==chem_scenario)].Battery_Chemistry.values,
-            color_discrete_sequence=px.colors.qualitative.Alphabet,
+            color_discrete_sequence=px.colors.qualitative.Alphabet, labels={'color':'Chemistry'}
         )
     fig_slb.update_layout(title_text='SLB installed capacity', font_size=16)
     fig_slb.update_yaxes(title_text="Capacity [MWh]")
