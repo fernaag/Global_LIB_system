@@ -362,6 +362,16 @@ def plot(
     fig_slb.update_xaxes(title_text="Year")
     return fig_mat, fig_in, fig_out, fig_stock, fig_slb
 
-if __name__ == "__main__":
-    app.run_server(host="127.0.0.1", port="8050", debug=True)
+# if __name__ == "__main__":
+#     app.run_server(host="127.0.0.1", port="8050", debug=True)
+
+if __name__ == '__main__':
+    
+    # for running the app on localhost (on your computer) uncomment the next line:
+
+    #sankey_app_parameters.run_server(debug=True)
+
+    # for running the app on the NTNU Openstack server uncomment the next line:
+
+    app.run_server(host="0.0.0.0", port="8051", debug=False)
 
