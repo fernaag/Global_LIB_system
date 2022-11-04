@@ -5673,6 +5673,95 @@ def sensitivity_table():
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
     
+def policy_brief():
+    import seaborn as sns
+    r=5
+    custom_cycler = cycler(color=sns.color_palette('Pastel1', 10))
+    #'Set2', 'Paired', 'YlGnBu'
+    # Load replacement results
+    
+        # Define storylines
+    fig, ax = plt.subplots(figsize=(8,8))
+    ax.set_prop_cycle(custom_cycler)
+    alpha = 1
+    z = 1
+    S= 1
+    R=1 # No reuse
+    V=1 # Constant
+    h=2 # Pyro
+    a = 3 # BNEF
+    time = 64
+    ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
+            np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, color = 'k', label = 'Baseline')
+    ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
+            np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,time::])/1e6,
+                np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, label='Slower fleet growth', alpha = alpha)
+    ax.annotate(' ', xy=(2053, 
+                        np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1, 1), textcoords='axes fraction',
+                    arrowprops=dict(facecolor='black', shrink=0.15),
+                    horizontalalignment='right', verticalalignment='top',)   
+    ax.annotate(f"{round((np.einsum('ep->', MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1])-np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,-1]))/(np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,-1]))*100,1)} %", xy=(2053, 
+                                                np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1.05, 1), textcoords='axes fraction',
+                    horizontalalignment='right', verticalalignment='top',)  
+    ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
+            np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,time::])/1e6,
+                np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, label='Smaller batteries', alpha = alpha)
+    ax.annotate(' ', xy=(2053, 
+                        np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1, 0.7), textcoords='axes fraction',
+                    arrowprops=dict(facecolor='black', shrink=0.15),
+                    horizontalalignment='right', verticalalignment='top',)   
+    ax.annotate(f"{round((np.einsum('ep->', MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1])-np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1]))/(np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1]))*100,1)} %", xy=(2053, 
+                                                np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1.05, 0.68), textcoords='axes fraction',
+                    horizontalalignment='right', verticalalignment='top',)  
+    ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
+            np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,h,time::])/1e6,
+                np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,time::])/1e6, linewidth=2, label='Replacements and reuse', alpha = alpha)
+    ax.annotate(' ', xy=(2053, 
+                        np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1, 0.45), textcoords='axes fraction',
+                    arrowprops=dict(facecolor='black', shrink=0.15),
+                    horizontalalignment='right', verticalalignment='top',)   
+    ax.annotate(f"{round((np.einsum('ep->', e01_replacements[0,S,a,R,0,r,:,:,h,-1])-np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1]))/(np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1]))*100,1)} %", xy=(2053, 
+                                                np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1.05, 0.45), textcoords='axes fraction',
+                    horizontalalignment='right', verticalalignment='top',)  
+    ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
+            np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,0,time::])/1e6,
+                np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,h,time::])/1e6, linewidth=2, label='Recycling of P, Li, Al, Si, graphite', alpha = alpha)
+    ax.annotate(' ', xy=(2053, 
+                        np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,0,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1, 0.35), textcoords='axes fraction',
+                    arrowprops=dict(facecolor='black', shrink=0.15),
+                    horizontalalignment='right', verticalalignment='top',)   
+    ax.annotate(f"{round(( np.einsum('ep->', e01_replacements[0,S,a,R,0,r,:,:,0,-1])-np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,h,-1]))/(np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,h,-1]))*100,1)} %", xy=(2053, 
+                                                np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,h,-1])/1e6), 
+                     xycoords='data', 
+                     xytext=(1.05, 0.32), textcoords='axes fraction',
+                    horizontalalignment='right', verticalalignment='top',)  
+    ax.legend(fontsize=16)
+    ax.set_title('Total material demand', fontsize=20)
+    ax.set_xlabel('Year',fontsize =16)
+    ax.tick_params(axis='both', which='major', labelsize=18)
+    ax.set_ylabel('Material demand/year [Gt]',fontsize =18)
+    ax.set_ylim([0,65])
+    ax.set_xlim([2015,2053])
+    right_side = ax.spines["right"]
+    right_side.set_visible(False)
+    top = ax.spines["top"]
+    top.set_visible(False)
+    fig.savefig(os.getcwd() + '/results/overview/policy_brief', dpi=600, bbox_inches='tight')
+    
 def export_P():
     results = os.path.join(os.getcwd(), 'results')
     np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_primary', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
