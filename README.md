@@ -19,4 +19,4 @@ Below you can find a decription of the data and folders included in this reposit
 7) requirements.txt: Requierments needed to run the model
 8) visualizations: Running dashboard.py allows the user to initialize a dynamic and interactive visualization tool to explore all of the scenarios included in MATILDA. They can be reached by going to the following site in a web browser while running the script: http://127.0.0.1:8050/
 
-All model scenarios can be explored at the following website: http://10.212.26.107:8051/ (to be made publically available soon)
+All model scenarios can be explored at the following website: http://129.241.153.168:8051/ (temporary link)
