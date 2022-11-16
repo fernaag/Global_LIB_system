@@ -562,7 +562,7 @@ def plot(
                 color_discrete_sequence=px.colors.qualitative.Alphabet, labels={'color':'Chemistry'}
             )
         fig_in.update_layout(title_text='Inflows by chemistry', font_size=16)
-        fig_in.update_yaxes(title_text="Vehicle sales [million]")
+        fig_in.update_yaxes(title_text="Battery sales [million]")
         fig_in.update_xaxes(title_text="Year")
         
         # Adding outflows
@@ -579,7 +579,7 @@ def plot(
                 color_discrete_sequence=px.colors.qualitative.Alphabet, labels={'color':'Chemistry'}
             )
         fig_out.update_layout(title_text='Outflows by chemistry', font_size=16)
-        fig_out.update_yaxes(title_text="Vehicle outflows [million]")
+        fig_out.update_yaxes(title_text="Battery outflows [million]")
         fig_out.update_xaxes(title_text="Year")
         
         fig_slb = px.area(
