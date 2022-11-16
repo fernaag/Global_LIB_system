@@ -16,3 +16,4 @@ dependencies:
  - tqdm==4.62.3
  - xlrd==1.2.0
  - xlwt==1.3.0
+ - dash-bootstrap-components == 1.2.1
