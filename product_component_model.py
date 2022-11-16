@@ -1953,7 +1953,7 @@ class ProductComponentModel(object):
                 # if the demand is smaller than the potential for component reuse,
                 # the oldest components will not be reused
                 components_for_reuse =  np.einsum('pc -> c', 
-                                                 self.[m,:m,oldest_cohort:m])
+                                                 self.reuse_tpc_cm[m,:m,:m])
                 c = oldest_cohort
                 while (components_for_reuse.sum() > demand_pr) and (c < m):
                     if components_for_reuse[c+1:].sum() > demand_pr:

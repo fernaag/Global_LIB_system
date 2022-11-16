@@ -5691,11 +5691,15 @@ def policy_brief():
     h=2 # Pyro
     a = 3 # BNEF
     time = 64
+    df = pd.DataFrame(columns=['Year','Baseline', 'Slower fleet growth', 'Smaller batteries', 'Replacements and reuse', 'Recycling of P, Li, Al, Si, graphite'])
     ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
             np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, color = 'k', label = 'Baseline')
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
             np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,time::])/1e6,
                 np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, label='Slower fleet growth', alpha = alpha)
+    df['Year'] = MaTrace_System.IndexTable['Classification']['Time'].Items[time::]
+    df['Baseline'] = np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[z,S,a,R,V,r,:,:,h,time::])/1e6
+    df['Slower fleet growth'] = np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,time::])/1e6
     ax.annotate(' ', xy=(2053, 
                         np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,-1])/1e6), 
                      xycoords='data', 
@@ -5710,6 +5714,7 @@ def policy_brief():
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
             np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,time::])/1e6,
                 np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,V,r,:,:,h,time::])/1e6, linewidth=2, label='Smaller batteries', alpha = alpha)
+    df['Smaller batteries'] = np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,time::])/1e6
     ax.annotate(' ', xy=(2053, 
                         np.einsum('ep->',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,-1])/1e6), 
                      xycoords='data', 
@@ -5724,6 +5729,7 @@ def policy_brief():
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
             np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,h,time::])/1e6,
                 np.einsum('ept->t',MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,R,0,r,:,:,h,time::])/1e6, linewidth=2, label='Replacements and reuse', alpha = alpha)
+    df['Replacements and reuse'] = np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,h,time::])/1e6
     ax.annotate(' ', xy=(2053, 
                         np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,h,-1])/1e6), 
                      xycoords='data', 
@@ -5738,6 +5744,7 @@ def policy_brief():
     ax.fill_between(MaTrace_System.IndexTable['Classification']['Time'].Items[time::], 
             np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,0,time::])/1e6,
                 np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,h,time::])/1e6, linewidth=2, label='Recycling of P, Li, Al, Si, graphite', alpha = alpha)
+    df['Recycling of P, Li, Al, Si, graphite'] = np.einsum('ept->t',e01_replacements[0,S,a,R,0,r,:,:,0,time::])/1e6
     ax.annotate(' ', xy=(2053, 
                         np.einsum('ep->',e01_replacements[0,S,a,R,0,r,:,:,0,-1])/1e6), 
                      xycoords='data', 
@@ -5749,6 +5756,7 @@ def policy_brief():
                      xycoords='data', 
                      xytext=(1.05, 0.32), textcoords='axes fraction',
                     horizontalalignment='right', verticalalignment='top',)  
+    df.to_excel(os.getcwd() + '/results/overview/policy_brief_table.xlsx')
     ax.legend(fontsize=16)
     ax.set_title('Total material demand', fontsize=20)
     ax.set_xlabel('Year',fontsize =16)
