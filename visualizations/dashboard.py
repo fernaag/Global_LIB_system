@@ -275,7 +275,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Ni')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_ni.update_yaxes(title_text="Material demand [t/year]")
+        fig_ni.update_yaxes(title_text="Material demand [kt/year]")
         fig_ni.update_xaxes(title_text="Year")
         
         fig_li = px.area(
@@ -299,7 +299,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Li')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_li.update_yaxes(title_text="Material demand [t/year]")
+        fig_li.update_yaxes(title_text="Material demand [kt/year]")
         fig_li.update_xaxes(title_text="Year")
         
         fig_co = px.area(
@@ -323,7 +323,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Co')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_co.update_yaxes(title_text="Material demand [t/year]")
+        fig_co.update_yaxes(title_text="Material demand [kt/year]")
         fig_co.update_xaxes(title_text="Year")
         
         fig_p = px.area(
@@ -347,7 +347,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='P')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_p.update_yaxes(title_text="Material demand [t/year]")
+        fig_p.update_yaxes(title_text="Material demand [kt/year]")
         fig_p.update_xaxes(title_text="Year")
         
         fig_al = px.area(
@@ -371,7 +371,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Al')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_al.update_yaxes(title_text="Material demand [t/year]")
+        fig_al.update_yaxes(title_text="Material demand [kt/year]")
         fig_al.update_xaxes(title_text="Year")
         
         fig_c = px.area(
@@ -395,7 +395,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Graphite')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_c.update_yaxes(title_text="Material demand [t/year]")
+        fig_c.update_yaxes(title_text="Material demand [kt/year]")
         fig_c.update_xaxes(title_text="Year")
         
         fig_mn = px.area(
@@ -419,7 +419,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Mn')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_mn.update_yaxes(title_text="Material demand [t/year]")
+        fig_mn.update_yaxes(title_text="Material demand [kt/year]")
         fig_mn.update_xaxes(title_text="Year")
         
         fig_cu = px.area(
@@ -443,7 +443,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Cu')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_cu.update_yaxes(title_text="Material demand [t/year]")
+        fig_cu.update_yaxes(title_text="Material demand [kt/year]")
         fig_cu.update_xaxes(title_text="Year")
         
         fig_si = px.area(
@@ -467,7 +467,7 @@ def plot(
                         (rec['EV_penetration_scenario']==ev_scenario)& (rec['Vehicle_size_scenario']==vehicle_size)&\
                         (rec['Reuse_scenario']==reuse_scenario) & (rec['Material']=='Si')&\
                         (rec['Recycling_Process']==recycling_process)].Material.values[0] + ' demand for LIBs', font_size=16)
-        fig_si.update_yaxes(title_text="Material demand [t/year]")
+        fig_si.update_yaxes(title_text="Material demand [kt/year]")
         fig_si.update_xaxes(title_text="Year")
         return [html.Div([
             
