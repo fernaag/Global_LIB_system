@@ -138,7 +138,7 @@ Update the data path and make sure that the path structure below is in accordanc
 where the data is stored. All relevant files can be found in https://doi.org/10.5281/zenodo.7252047
 '''
 
-data_path = '/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/03_scenario_data/global_model'
+data_path = '/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/03_scenario_data/global_model'
 
 ParameterDict = {}
 mo_start = 0 # set mo for re-reading a certain parameter
@@ -624,10 +624,10 @@ for z in range(Nz):
 
 # save results
 
-np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_base', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
-np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_base', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
-np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_base', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_base', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_base', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
+np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_base', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
+np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_base', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_base', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 # %%
 # Import values from long lifetime and battery reuse and replacement scenarios. They are computed in the functions below. 
@@ -635,12 +635,12 @@ from cycler import cycler
 import seaborn as sns
 r=5
 custom_cycler = cycler(color=sns.color_palette('Set2', 20)) #'Set2', 'Paired', 'YlGnBu'
-e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
-e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
-e23_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt.npy')
-e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
-e81_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt.npy')
-primary_total = pd.read_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
+e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+e01_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
+e23_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt.npy')
+e81_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
+e81_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt.npy')
+primary_total = pd.read_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
 
 #%% 
 def results_Sofia():
@@ -654,7 +654,7 @@ def results_Sofia():
     # Export version
     Model_output = pd.concat([stock, inflow, outflow], axis=1)
     Model_output.set_index(np.arange(1950,2051),inplace=True)
-    Model_output.to_excel('/Users/fernaag/Library/CloudStorage/Box-Box/Teaching/Master_Students/Sofia Genovesi/Model_Output.xlsx')
+    Model_output.to_excel('/Users/feraguilar/Library/CloudStorage/Box-Box/Teaching/Master_Students/Sofia Genovesi/Model_Output.xlsx')
 
 def plots():
     for j, z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
@@ -676,7 +676,7 @@ def plots():
             ax.set_xlabel('Year',fontsize =16)
             #ax.set_ylim([0,5])
             ax.tick_params(axis='both', which='major', labelsize=18)
-            fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_per_DT'.format(z,S))       
+            fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_per_DT'.format(z,S))       
 
             fig, ax = plt.subplots(figsize=(8,7))
             ax.set_prop_cycle(custom_cycler)
@@ -691,7 +691,7 @@ def plots():
             ax.set_title('Vehicle outflows per drive train {} scenario'.format(S), fontsize=20)
             ax.set_xlabel('Year',fontsize =18)
             ax.tick_params(axis='both', which='major', labelsize=15)
-            fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Outflows_per_DT'.format(z,S))
+            fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Outflows_per_DT'.format(z,S))
 
 
             ### Inflows per DT
@@ -708,7 +708,7 @@ def plots():
             ax.set_title('Inflows per drive train {} scenario'.format(S), fontsize=16)
             ax.set_xlabel('Year',fontsize =16)
             ax.tick_params(axis='both', which='major', labelsize=15)
-            fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Inflows_per_DT'.format(z,S))
+            fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Inflows_per_DT'.format(z,S))
 
             # Energy storage needs
             fig, ax = plt.subplots(figsize=(8,7))
@@ -726,7 +726,7 @@ def plots():
             ax.set_title('Demand for energy storage', fontsize=16)
             ax.set_xlabel('Year',fontsize =16)
             ax.tick_params(axis='both', which='major', labelsize=15)
-            fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/overview/Storage_range')
+            fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/overview/Storage_range')
 
             ### Stock per DT and S
             for g in range(0,Ng):
@@ -743,7 +743,7 @@ def plots():
                 ax.set_title('{} stock per segment'.format(MaTrace_System.IndexTable['Classification']['Good'].Items[g]), fontsize=20)
                 ax.set_xlabel('Year',fontsize =18)
                 ax.tick_params(axis='both', which='major', labelsize=15)
-                fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/{}_stock_per_S'.format(z,S, MaTrace_System.IndexTable['Classification']['Good'].Items[g]))
+                fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/{}_stock_per_S'.format(z,S, MaTrace_System.IndexTable['Classification']['Good'].Items[g]))
 
             ### Stock per battery part
             fig, ax = plt.subplots(figsize=(8,7))
@@ -759,7 +759,7 @@ def plots():
             ax.set_title('Battery weight stock per part', fontsize=20)
             ax.set_xlabel('Year',fontsize =18)
             ax.tick_params(axis='both', which='major', labelsize=15)
-            fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_BEV_per_part'.format(z,S))
+            fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_BEV_per_part'.format(z,S))
 
             
 
@@ -780,7 +780,7 @@ def plots():
                 ax.set_xlabel('Year',fontsize =16)
                 #ax.set_ylim([0,5])
                 ax.tick_params(axis='both', which='major', labelsize=18)
-                fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/SLB_stock_chemistry_{}'.format(z,S,k))
+                fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/SLB_stock_chemistry_{}'.format(z,S,k))
 
             # ### Stock in weight per material
             for a, b in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Chemistry_Scenarios')].Items):
@@ -801,7 +801,7 @@ def plots():
                 ax.set_xlabel('Year', fontsize =16)
                 ax.tick_params(axis='both', which='major', labelsize=15)
                 ax.tick_params(axis='x', which='major', rotation=90)
-                fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/BEV_capacity_{}_scenario'.format(z,S, b))
+                fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/BEV_capacity_{}_scenario'.format(z,S, b))
                 ### Available capacity SLB
 
                 for w, R in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Reuse_Scenarios')].Items):
@@ -820,7 +820,7 @@ def plots():
                     ax.tick_params(axis='both', which='major', labelsize=15)
                     ax.tick_params(axis='x', which='major', rotation=90)
                     fig.show()
-                    fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/SLB_capacity_{}_{}_scenario'.format(z,S, b, R))
+                    fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/SLB_capacity_{}_{}_scenario'.format(z,S, b, R))
 
             #     fig, ax = plt.subplots(figsize=(8,7))
             #     ax.set_prop_cycle(custom_cycler)
@@ -835,7 +835,7 @@ def plots():
             #     ax.set_title('Material stock {} scenario'.format(b), fontsize=20)
             #     ax.set_xlabel('Year',fontsize =18)
             #     ax.tick_params(axis='both', which='major', labelsize=15)
-            #     fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_stock_{}_scenario'.format(z,S, b))
+            #     fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_stock_{}_scenario'.format(z,S, b))
 
             #     # Material inflows
             #     fig, ax = plt.subplots(figsize=(8,7))
@@ -851,7 +851,7 @@ def plots():
             #     ax.set_title('Material demand {} scenario'.format(b), fontsize=20)
             #     ax.set_xlabel('Year',fontsize =18)
             #     ax.tick_params(axis='both', which='major', labelsize=15)
-            #     fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_demand_{}_scenario'.format(z,S, b))
+            #     fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_demand_{}_scenario'.format(z,S, b))
 
             #     # Weight stock
             #     fig, ax = plt.subplots(figsize=(8,7))
@@ -867,7 +867,7 @@ def plots():
             #     ax.set_title('Material demand {} scenario'.format(b), fontsize=20)
             #     ax.set_xlabel('Year',fontsize =18)
             #     ax.tick_params(axis='both', which='major', labelsize=15)
-            #     fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_demand_{}_scenario'.format(z,S, b))
+            #     fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Material_demand_{}_scenario'.format(z,S, b))
 
                 ### Stock per chemistry BEV
                 fig, ax = plt.subplots(figsize=(8,7))
@@ -883,7 +883,7 @@ def plots():
                 ax.set_title('BEV stock by chemistry {} scenario'.format(b), fontsize=16)
                 ax.set_xlabel('Year',fontsize =16)
                 ax.tick_params(axis='both', which='major', labelsize=15)
-                fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_BEV_per_chemistry_{}_scenario'.format(z,S,b))
+                fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Stock_BEV_per_chemistry_{}_scenario'.format(z,S,b))
 
             
     #         # Sensitivity to lifetime
@@ -912,7 +912,7 @@ def plots():
                     ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[j,1,0,1,:,:,e,1
                     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[j,1,0,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[j,1,0,:,:,:,e,70:])/1000000)*100, label='{} no reuse'.format(IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e]),linewidth=3.0)
                     ax.legend(loc='upper left',prop={'size':13})
-                    fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Recycled_content_lifetime'.format(z, S))
+                    fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Recycled_content_lifetime'.format(z, S))
     # Sensitivity to recycling technology
             fig, ax = plt.subplots(figsize=(8,7))
             ax.set_prop_cycle(custom_cycler)
@@ -941,7 +941,7 @@ def plots():
                     ax.plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70:], np.einsum('rpt->t', MaTrace_System.FlowDict['E_8_1'].Values[j,1,1,1,:,:,e,2
                     ,70:]/1000000)/np.einsum('rbpt->t', (MaTrace_System.FlowDict['E_1_3'].Values[j,1,1,:,:,:,e,70:] + MaTrace_System.FlowDict['E_2_3'].Values[j,1,1,:,:,:,e,70:])/1000000)*100, label='{} Pyromet'.format(IndexTable.Classification[IndexTable.index.get_loc('Element')].Items[e]),linewidth=3.0)
                     ax.legend(loc='upper left',prop={'size':13})
-                    fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/Recycled_content_recycling_process'.format(z, S))
+                    fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/Recycled_content_recycling_process'.format(z, S))
 
 def rec_content_tech():
     # Sensitivity to technology development
@@ -1027,9 +1027,9 @@ def rec_content_lifetime():
 def rec_content_strategies():
     from cycler import cycler
     import seaborn as sns
-    e13_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy')
-    e23_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy')
-    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
+    e13_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy')
+    e23_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy')
+    e81_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
     bau = MaTrace_System.FlowDict['E_0_1'].Values[1,1,6,0,r,:,:,1,:].sum(axis=0)
 
     z = 1 
@@ -1193,9 +1193,9 @@ def rec_content_sensitivity():
     from cycler import cycler
     import seaborn as sns
     from matplotlib.lines import Line2D
-    e13_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy') # zSarbpet
-    e23_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy') # zSarbpet
-    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')# zSaRrpeht
+    e13_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6.npy') # zSarbpet
+    e23_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6.npy') # zSarbpet
+    e81_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')# zSaRrpeht
     
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     # Define sensitivity analysis for Ni
@@ -1993,7 +1993,7 @@ def strategies_comparative():
     r=5
     custom_cycler = cycler(color=sns.color_palette('tab10', 20)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
         # Define storylines
     fig, ax = plt.subplots(4,2,figsize=(20,28))
     ax[0,0].set_prop_cycle(custom_cycler)
@@ -2558,7 +2558,7 @@ def sensitivity_analysis():
     r=5
     custom_cycler = cycler(color=sns.color_palette('magma', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
     resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
@@ -3030,9 +3030,9 @@ def sensitivity_analysis_newcolor():
     r=5
     custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    # e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
-    # e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
-    # primary_total = pd.read_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
+    # e01_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')
+    # e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    # primary_total = pd.read_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
@@ -3874,7 +3874,7 @@ def sensitivity_analysis_recycling():
     r=5
     custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e81_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
+    e81_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6.npy')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_8_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_8_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
@@ -3926,7 +3926,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3)
     # ax[0,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     2.51, 'k', marker="*", markersize=15) # Mine production of Ni, page 50 of report. In metal content
-    ax[0,0].set_ylabel('Primary Ni demand [Mt]',fontsize =18)
+    ax[0,0].set_ylabel('Recycled Ni [Mt]',fontsize =18)
     right_side = ax[0,0].spines["right"]
     right_side.set_visible(False)
     top = ax[0,0].spines["top"]
@@ -3980,7 +3980,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3)
     # ax[0,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     0.085, 'k', marker="*", markersize=15) # Li minerals production, page 44, Li content world total
-    ax[0,1].set_ylabel('Primary Li demand [Mt]',fontsize =18)
+    ax[0,1].set_ylabel('Recycled Li [Mt]',fontsize =18)
     right_side = ax[0,1].spines["right"]
     right_side.set_visible(False)
     top = ax[0,1].spines["top"]
@@ -4035,7 +4035,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3)
     # ax[1,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     0.126, 'k', marker="*", markersize=15) # Co mine production, page 16, metal content world total
-    ax[1,0].set_ylabel('Primary Co demand [Mt]',fontsize =18)
+    ax[1,0].set_ylabel('Recycled Co [Mt]',fontsize =18)
     right_side = ax[1,0].spines["right"]
     right_side.set_visible(False)
     top = ax[1,0].spines["top"]
@@ -4111,7 +4111,7 @@ def sensitivity_analysis_recycling():
     ax[1,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
     right_side = ax[1,1].spines["right"]
-    ax[1,1].set_ylabel('Primary P demand [Mt]',fontsize =18)
+    ax[1,1].set_ylabel('Recycled P [Mt]',fontsize =18)
     right_side.set_visible(False)
     top = ax[1,1].spines["top"]
     top.set_visible(False)
@@ -4168,7 +4168,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3)
     # ax[2,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     65.4, 'k', marker="*", markersize=15) # production of primary aluminium, page 4
-    ax[2,0].set_ylabel('Primary Al demand [Mt]',fontsize =18)
+    ax[2,0].set_ylabel('Recycled Al [Mt]',fontsize =18)
     right_side = ax[2,0].spines["right"]
     right_side.set_visible(False)
     top = ax[2,0].spines["top"]
@@ -4223,7 +4223,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3)
     # ax[2,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     1, 'k', marker="*", markersize=15) # Production of graphite, page 29
-    ax[2,1].set_ylabel('Primary Graphite demand [Mt]',fontsize =18)
+    ax[2,1].set_ylabel('Recycled Graphite [Mt]',fontsize =18)
     right_side = ax[2,1].spines["right"]
     right_side.set_visible(False)
     top = ax[2,1].spines["top"]
@@ -4298,7 +4298,7 @@ def sensitivity_analysis_recycling():
                                         EV4[e,65::]/1000000,  linewidth=3)
     ax[3,0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[65::], 
                                         EV5[e,65::]/1000000,  linewidth=3)
-    ax[3,0].set_ylabel('Primary Mn demand [Mt]',fontsize =18)
+    ax[3,0].set_ylabel('Recycled Mn [Mt]',fontsize =18)
     right_side = ax[3,0].spines["right"]
     right_side.set_visible(False)
     top = ax[3,0].spines["top"]
@@ -4357,7 +4357,7 @@ def sensitivity_analysis_recycling():
                                         EV5[e,65::]/1000000,  linewidth=3, label='MRS5, Fast transition - systemic solutions')
     # ax[3,1].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70], 
     #                                     24.9, 'k', marker="*", markersize=15) # Refined production of copper, page 20
-    ax[3,1].set_ylabel('Primary Cu demand [Mt]',fontsize =18)
+    ax[3,1].set_ylabel('Recycled Cu [Mt]',fontsize =18)
     right_side = ax[3,1].spines["right"]
     right_side.set_visible(False)
     top = ax[3,1].spines["top"]
@@ -4400,7 +4400,7 @@ def sensitivity_analysis_complete():
     r=5
     custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,0,0,2,r,:,:,2,:].sum(axis=0)
@@ -4922,7 +4922,7 @@ def sensitivity_analysis_grey():
     r=5
     custom_cycler = cycler(color=sns.color_palette('magma', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     sustainable = e01_replacements[0,2,2,2,r,:,:,0,:].sum(axis=0)
     resource = MaTrace_System.FlowDict['E_0_1'].Values[1,2,0,0,r,:,:,0,:].sum(axis=0)
@@ -5280,13 +5280,13 @@ def material_use_lt():
     h = 1
     fig, ax = plt.subplots(1,2,figsize=(14,10))
     e01 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
-    e01_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
+    e01_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt.npy')[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
     e81 = MaTrace_System.FlowDict['E_8_1'].Values[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
-    e81_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt.npy')[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
+    e81_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt.npy')[1,1,a,R,1,r,:,e,h,:].sum(axis=0)
     f23 = MaTrace_System.FlowDict['F_2_3'].Values[1,1,1,r,1,:,:].sum(axis=0) + MaTrace_System.FlowDict['F_2_3'].Values[1,1,1,r,2,:,:].sum(axis=0) 
-    f23_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt.npy')[1,1,1,r,1,:,:].sum(axis=0) + np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt.npy')[1,1,1,r,2,:,:].sum(axis=0)
+    f23_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt.npy')[1,1,1,r,1,:,:].sum(axis=0) + np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt.npy')[1,1,1,r,2,:,:].sum(axis=0)
     f34 = MaTrace_System.FlowDict['F_3_4'].Values[1,1,1,r,1,:,:,:].sum(axis=0) + MaTrace_System.FlowDict['F_3_4'].Values[1,1,1,r,2,:,:,:].sum(axis=0)
-    f34_long_lt = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt.npy')[1,1,1,r,1,:,:,:].sum(axis=0) + np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt.npy')[1,1,1,r,2,:,:,:].sum(axis=0)
+    f34_long_lt = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt.npy')[1,1,1,r,1,:,:,:].sum(axis=0) + np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt.npy')[1,1,1,r,2,:,:,:].sum(axis=0)
     
     ax[0].set_prop_cycle(custom_cycler)
     ax[0].plot(MaTrace_System.IndexTable['Classification']['Time'].Items[70::], 
@@ -5438,7 +5438,7 @@ def graphical_abstract():
     r=5
     custom_cycler = cycler(color=sns.color_palette('cool', 4)) #'Set2', 'Paired', 'YlGnBu'
     # Load replacement results
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
@@ -5772,12 +5772,12 @@ def policy_brief():
     
 def export_P():
     results = os.path.join(os.getcwd(), 'results')
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_primary', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_recycled', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_primary', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/P_demand_vehicles_global_recycled', np.einsum('zSaRpht->zSaRht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,1,r,:,4,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
     
 def export_Li():
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_primary', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_recycled', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_primary', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Li_demand_vehicles_global_recycled', np.einsum('zSaRVpht->zSaRVht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,0,:,:])/1000)
 
 def export_mean_Al():
     al_values = np.zeros((NS, Na, NV, Np, Nt))
@@ -5786,12 +5786,12 @@ def export_mean_Al():
             for V in range(NV):
                 for p in range(Np):
                     al_values[S,a,V,p,:] = (MaTrace_System.FlowDict['E_0_1'].Values[0,S,a,0,V,r,p,2,0,:] + MaTrace_System.FlowDict['E_8_1'].Values[0,S,a,0,V,r,p,2,0,:])/np.einsum('gst->t',MaTrace_System.FlowDict['F_2_3'].Values[0,S,V,r,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/average_Al_content', al_values)
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/average_Al_content', al_values)
        
 def export_Ni():
     results = os.path.join(os.getcwd(), 'results')
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_primary', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_recycled', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_primary', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/Ni_demand_vehicles_global_recycled', np.einsum('zSaRspht->zSaRsht', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,r,:,7,:,:])/1000) # z,S,a,R,V,r,p,e,h,t
 
 def export_primary_demand_df(): 
     z,S,a,R,V,r,p,e,h,t = pd.core.reshape.util.cartesian_product(
@@ -5830,7 +5830,7 @@ def export_primary_demand_df():
 
     file['value'] = values
         
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand.xlsx', engine='xlsxwriter')
     # Write each dataframe to a different worksheet.
     for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
         for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
@@ -5885,10 +5885,10 @@ def export_primary_demand_df_new():
                                     
     file['value'] = values
         
-    # writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
+    # writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
     # file.to_excel(writer)
-    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
-    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.csv')
+    file.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new')
+    file.to_csv('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.csv')
     
 def export_secondary_availability_df_new():     
     z,S,a,R,V,r,e,h,i,t = pd.core.reshape.util.cartesian_product(
@@ -5935,10 +5935,10 @@ def export_secondary_availability_df_new():
                                     
     file['value'] = values
         
-    # writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
+    # writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/primary_material_demand_new.xlsx', engine='xlsxwriter')
     # file.to_excel(writer)
-    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new')
-    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new.csv')
+    file.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new')
+    file.to_csv('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_demand_new.csv')
     
 def export_secondary_availability_df(): 
     z,S,a,R,V,r,p,e,h,t = pd.core.reshape.util.cartesian_product(
@@ -5977,7 +5977,7 @@ def export_secondary_availability_df():
 
     file['value'] = values
         
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_availability.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/secondary_material_availability.xlsx', engine='xlsxwriter')
     # Write each dataframe to a different worksheet.
     for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
         for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
@@ -6000,7 +6000,7 @@ def export_storylines():
         dict( Material=e, Time=t)
     )
     
-    e01_replacements = np.load('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
+    e01_replacements = np.load('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6.npy')
     # Define storylines
     EV1 = MaTrace_System.FlowDict['E_0_1'].Values[1,0,1,1,1,r,:,:,2,:].sum(axis=0)
     EV2 = MaTrace_System.FlowDict['E_0_1'].Values[1,1,3,0,1,r,:,:,2,:].sum(axis=0)
@@ -6094,14 +6094,14 @@ def export_storylines():
             values.append(value)
     
     file2['MRS5'] = values
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS.xlsx', engine='xlsxwriter')
     # Write each dataframe to a different worksheet.
     file.to_excel(writer, sheet_name='Primary_materials')
     file2.to_excel(writer, sheet_name='Secondary_materials')
     # Close the Pandas Excel writer and output the Excel file.
     writer.save()
-    file.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_primary.csv')
-    file2.to_csv('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_secondary.csv')
+    file.to_csv('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_primary.csv')
+    file2.to_csv('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/EV_MRS_secondary.csv')
  
 def export_battery_flows():
     z,S,a,V,r,g,s,b,t = pd.core.reshape.util.cartesian_product(
@@ -6157,7 +6157,7 @@ def export_battery_flows():
     file2['value'] = values
     file2['unit'] = 'million'
     
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows.xlsx', engine='xlsxwriter')
     # Write each dataframe to a different worksheet.
     for z,Z in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Stock_Scenarios')].Items):
         for s,S in enumerate(IndexTable.Classification[IndexTable.index.get_loc('Scenario')].Items):
@@ -6216,10 +6216,10 @@ def export_battery_flows_new():
     file2['value'] = values
     file2['unit'] = 'million'
     
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new.xlsx', engine='xlsxwriter')
     file.to_excel(writer)
-    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new')
-    file2.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/outflows')
+    file.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/system_flows_new')
+    file2.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/outflows')
 
     
     writer.save()
@@ -6259,9 +6259,9 @@ def export_slb_stock():
     file['value'] = values
     file['unit'] = 'MWh'
     
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity.xlsx', engine='xlsxwriter')
     file.to_excel(writer)
-    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity')
+    file.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/slb_capacity')
     
     writer.save()
  
@@ -6296,9 +6296,9 @@ def export_stock():
     file['value'] = values
     file['unit'] = 'Million'
     
-    writer = pd.ExcelWriter('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock.xlsx', engine='xlsxwriter')
     file.to_excel(writer)
-    file.to_pickle('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock')
+    file.to_pickle('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/stock')
     
     writer.save()
  
@@ -6347,7 +6347,7 @@ def export_sensitivity_over_time():
         result = pd.DataFrame({'Year':IndexTable.Classification[IndexTable.index.get_loc('Time')].Items[72::],'Material':E,'Shift to LFP': lfp, 'Shift to high Ni': ncx, 'Shift to LiS, Li-Air': nxtgn, 'Less stock growth': lstock, 'More efficient recycling':eff_rec, 'Faster EV penetration':hev, 'Shift to smaller EVs': sev, 'Battery repairs':rep, 'Longer lifetime':lglt})
         df = pd.concat([df, result])
     
-    df.to_excel('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/sensitivity_over_time.xlsx')
+    df.to_excel('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/02_harmonized_data/parameter_values/sensitivity_over_time.xlsx')
         
 def calculate_capacities():
     MaTrace_System.FlowDict['C_2_3'].Values[:,:,:,:,r,:,:,:,:] = np.einsum('zSaVgsbt,bt->zSaVgsbt', MaTrace_System.FlowDict['B_2_3'].Values[:,:,:,:,r,:,:,:,:], \
@@ -6407,7 +6407,7 @@ def calculate_capacities():
     ax[1].set_title('Installed capacity by technology', fontsize=20)
     ax[1].set_xlabel('Year',fontsize =18)
     ax[1].tick_params(axis='both', which='major', labelsize=15)
-    fig.savefig('/Users/fernaag/Box/BATMAN/Coding/Global_model/results/{}/{}/capacities')
+    fig.savefig('/Users/feraguilar/Box/BATMAN/Coding/Global_model/results/{}/{}/capacities')
 
 def model_case_6():
     ########## This scenario should only be run to get the values with battery reuse and replacement
@@ -6589,10 +6589,10 @@ def model_case_6():
                     for h in range(Nh):
                         MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# +MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:] # Solving recycling loop z,S,a,R,V,r,p,e,h,t
 
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_case6', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_case6', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_case6', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_case6', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
 
 def model_long_lt():
     lt_cm  = np.array([16])
@@ -6771,11 +6771,11 @@ def model_long_lt():
                     for h in range(Nh):
                         MaTrace_System.FlowDict['E_0_1'].Values[z,:,a,R,:,r,:,:,h,:] =  MaTrace_System.FlowDict['E_2_3'].Values[z,:,a,:,r,:,:,:] - MaTrace_System.FlowDict['E_8_1'].Values[z,:,a,R,:,r,:,:,h,:]# +MaTrace_System.FlowDict['E_1_3'].Values[z,:,a,:,r,:,:,:] # Solving recycling loop z,S,a,R,V,r,p,e,h,t
 
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:,:])
-    np.save('/Users/fernaag/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E81_long_lt', MaTrace_System.FlowDict['E_8_1'].Values[:,:,:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E01_long_lt', MaTrace_System.FlowDict['E_0_1'].Values[:,:,:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E13_long_lt', MaTrace_System.FlowDict['E_1_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/E23_long_lt', MaTrace_System.FlowDict['E_2_3'].Values[:,:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F23_long_lt', MaTrace_System.FlowDict['F_2_3'].Values[:,:,:,:,:,:,:])
+    np.save('/Users/feraguilar/Library/CloudStorage/Box-Box/BATMAN/Data/Database/data/04_model_output/F34_long_lt', MaTrace_System.FlowDict['F_3_4'].Values[:,:,:,:,:,:,:,:])
 
 # %%
