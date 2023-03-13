@@ -2,6 +2,8 @@
 
 ## This repo contains the code to run the global MATILDA model related to the publication: "Evaluating strategies for managing resource use in lithium-ion batteries for electric vehicles using the global MATILDA model"
 
+The full open-access article describing the data can be found here: https://doi.org/10.1016/j.resconrec.2023.106951 
+
 Below you can find a decription of the data and folders included in this repository as well as the requirements and data structure needed to run it.
 
 1) data_handling -> fitting_and_preparation folders: contain several .ipynb scripts which take the raw data, process it into scenarios, and creates ODYM-ready arrays with the corresponding aspects and sizes. The raw data is not included here due to size limitations on GitHub but can be found in the SI of the manuscript. The data paths need to be updated accordingly.
